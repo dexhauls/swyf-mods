@@ -1,0 +1,918 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Mody pro Scam With Your Friends: hra ti rozumí česky. Návod ve 4 krocích a knihovna modů ke stažení.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Lepší čeština pro SWYF">
+<meta property="og:description" content="Mody pro Scam With Your Friends: hra ti rozumí česky. Návod ve 4 krocích a knihovna modů ke stažení.">
+<meta property="og:url" content="https://dexhauls.github.io/swyf-mods/">
+<meta property="og:image" content="https://dexhauls.github.io/swyf-mods/rozhovor.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#1f6fc4">
+<title>Lepší čeština pro SWYF</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+  /* Layout: a working copy of the game's in-game computer ("Kolkata OS"). Desktop icons open draggable
+     app windows; a taskbar lists open windows, has a Start menu and a live clock. On phones every window
+     opens full screen. One deliberate look (the game's), not light/dark themed. */
+  :root {
+    --desk: #1f6fc4;
+    --desk-stripe: #2a7bd0;
+    --desk-deep: #155aa8;
+    --chrome: #f3f4f6;
+    --chrome-off: #d6dae0;
+    --chrome-ink: #16181d;
+    --win: #11161d;
+    --win-2: #1a222c;
+    --win-line: #2c3846;
+    --ink: #eef1f6;
+    --ink-soft: #b8c2d0;
+    --ink-faint: #7f8b9b;
+    --phone: #23a455;
+    --hangup: #d3203f;
+    --doubt: #f5c542;
+    --hub: #ffc23d;
+    --hub-ink: #1c1505;
+    --taskbar: #232a35;
+    --tb-h: 54px;
+    --font-ui: "Rubik", "Segoe UI", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", Consolas, ui-monospace, monospace;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { height: 100%; }
+  body {
+    margin: 0; overflow: hidden;
+    background:
+      repeating-linear-gradient(-58deg, transparent 0 46px, rgba(255,255,255,0.055) 46px 49px, transparent 49px 120px),
+      linear-gradient(160deg, var(--desk-stripe), var(--desk) 45%, var(--desk-deep));
+    color: var(--ink);
+    font: 400 16px/1.55 var(--font-ui);
+    -webkit-font-smoothing: antialiased;
+  }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  :focus-visible { outline: 3px solid var(--doubt); outline-offset: 2px; border-radius: 6px; }
+  h1, h2, h3, h4, p { margin: 0; }
+  h1, h2, h3 { text-wrap: balance; }
+  code { font-family: var(--font-mono); font-size: 0.84em; background: var(--win-2); border: 1px solid var(--win-line); padding: 1px 6px; border-radius: 6px; overflow-wrap: anywhere; }
+
+  /* ---------- Desktop ---------- */
+  .desktop {
+    position: fixed; inset: 0 0 calc(var(--tb-h) + env(safe-area-inset-bottom, 0px)) 0;
+    padding-top: calc(14px + env(safe-area-inset-top, 0px));
+    padding-left: max(12px, env(safe-area-inset-left, 0px));
+    padding-right: max(12px, env(safe-area-inset-right, 0px));
+    overflow: hidden;
+  }
+  .icons { display: grid; grid-auto-flow: column; grid-template-rows: repeat(auto-fill, 104px); grid-auto-columns: 100px; gap: 4px 8px; height: 100%; align-content: start; }
+  .icon {
+    display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 4px;
+    color: #fff; font-size: 13px; font-weight: 500; text-align: center; line-height: 1.2;
+    border-radius: 8px; border: 1px solid transparent; text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    overflow-wrap: anywhere;
+  }
+  .icon:hover { background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.3); }
+  .icon:active { background: rgba(255,255,255,0.24); }
+  .app { width: 52px; height: 52px; border-radius: 12px; display: grid; place-items: center; box-shadow: 0 3px 0 rgba(0,0,0,0.2); flex: none; position: relative; }
+  .app svg { width: 30px; height: 30px; }
+  .app.sm { width: 22px; height: 22px; border-radius: 5px; box-shadow: none; }
+  .app.sm svg { width: 14px; height: 14px; }
+  .app .badge { position: absolute; top: -6px; right: -6px; min-width: 20px; height: 20px; border-radius: 10px; background: var(--hangup); color: #fff; font-size: 12px; font-weight: 800; display: grid; place-items: center; border: 2px solid #fff; }
+  .bg-hello { background: var(--doubt); }
+  .bg-phone { background: var(--phone); }
+  .bg-script { background: #1f86d6; }
+  .bg-files { background: #f0d38a; }
+  .bg-settings { background: #6b5bd6; }
+  .bg-malware { background: #ef8a2b; }
+  .bg-hub { background: var(--hub); }
+  .bg-mod { background: #20303f; border: 2px solid var(--hub); }
+  .icon .doc { width: 46px; height: 56px; border-radius: 4px 14px 4px 4px; background: #fff; display: grid; place-items: center; box-shadow: 0 3px 0 rgba(0,0,0,0.2); position: relative; }
+  .icon .doc .app { width: 30px; height: 30px; border-radius: 8px; box-shadow: none; }
+  .icon .doc .app svg { width: 18px; height: 18px; }
+  .icon .doc em { position: absolute; bottom: 3px; font: 700 8.5px/1 var(--font-mono); color: #4a5563; font-style: normal; }
+
+  /* ---------- Windows ---------- */
+  .window {
+    position: absolute; display: flex; flex-direction: column;
+    background: var(--win); border: 2px solid #0b0e12;
+    box-shadow: 0 22px 48px rgba(6, 24, 54, 0.5), 0 2px 0 rgba(0,0,0,0.3);
+    min-width: 280px; min-height: 160px; max-width: calc(100vw - 16px);
+  }
+  .window[hidden] { display: none !important; }
+  .window.opening { animation: pop 0.16s ease-out; }
+  @keyframes pop { from { transform: scale(0.96); opacity: 0.4; } to { transform: none; opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .window.opening { animation: none; } }
+  .titlebar {
+    background: var(--chrome-off); color: #444b56; display: flex; align-items: center; gap: 10px;
+    padding: 6px 6px 6px 8px; font-weight: 500; font-size: 15px; user-select: none; touch-action: none; cursor: grab; flex: none;
+  }
+  .window.focused .titlebar { background: var(--chrome); color: var(--chrome-ink); }
+  .window.dragging .titlebar { cursor: grabbing; }
+  .titlebar .t { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ctrl { display: flex; gap: 2px; }
+  .ctrl button { width: 32px; height: 28px; border-radius: 4px; display: grid; place-items: center; }
+  .ctrl button:hover { background: rgba(0,0,0,0.08); }
+  .ctrl button.x:hover { background: var(--hangup); }
+  .ctrl i { display: block; width: 14px; height: 14px; position: relative; }
+  .ctrl .min::after { content: ""; position: absolute; left: 1px; right: 1px; bottom: 4px; height: 3px; background: var(--chrome-ink); }
+  .ctrl .max { border: 2.5px solid var(--chrome-ink); border-top-width: 3.5px; }
+  .ctrl .x::before, .ctrl .x::after { content: ""; position: absolute; left: 6px; top: -2px; width: 3px; height: 18px; background: var(--hangup); transform: rotate(45deg); }
+  .ctrl .x::after { transform: rotate(-45deg); }
+  .ctrl button.x:hover .x::before, .ctrl button.x:hover .x::after { background: #fff; }
+  .window.maxed { left: 0 !important; top: 0 !important; width: 100% !important; height: 100% !important; max-width: none; }
+  .window.maxed .titlebar { cursor: default; }
+  .body { padding: 20px; display: flex; flex-direction: column; gap: 16px; overflow: auto; flex: 1; min-height: 0; overscroll-behavior: contain; }
+  .body::-webkit-scrollbar { width: 10px; }
+  .body::-webkit-scrollbar-thumb { background: #34404f; border-radius: 5px; border: 2px solid var(--win); }
+  .panel { border: 1px solid var(--win-line); border-radius: 8px; background: var(--win-2); padding: 14px 16px; }
+  .label { font-weight: 800; font-size: 14px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .window h2 { font-weight: 800; font-size: 24px; line-height: 1.15; }
+  .lead { color: var(--ink-soft); }
+  .act { display: inline-flex; align-items: center; gap: 8px; border-radius: 8px; padding: 10px 16px; font-weight: 700; font-size: 15px; background: var(--win-2); border: 1px solid var(--win-line); }
+  .act:hover { background: #243040; }
+  .act.go { background: var(--phone); border-color: var(--phone); color: #fff; }
+  .act.go:hover { background: #1e914b; }
+  .acts { display: flex; flex-wrap: wrap; gap: 10px; }
+
+  /* Vítej */
+  .hello h1 { font-weight: 900; font-size: clamp(30px, 5vw, 42px); line-height: 1; letter-spacing: -0.01em; }
+  .hello h1 mark { background: none; color: var(--doubt); }
+  .hello p { color: var(--ink-soft); font-size: 16.5px; }
+  .stamps { display: flex; flex-wrap: wrap; gap: 8px; }
+  .stamp { background: #fff; color: var(--chrome-ink); border-radius: 8px; padding: 5px 11px; font-size: 13.5px; font-weight: 600; }
+  .stamp b { color: var(--phone); }
+  .tip { font-size: 13.5px; color: var(--ink-faint); }
+
+  /* Telefon */
+  .trust { display: grid; grid-template-columns: 1fr auto; gap: 8px 12px; align-items: center; }
+  .trust .state { font-weight: 800; color: var(--doubt); text-transform: uppercase; font-size: 14px; letter-spacing: 0.04em; }
+  .bar { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; }
+  .bar span { height: 8px; background: #2b3542; border-radius: 4px; overflow: hidden; display: block; }
+  .bar span::before { content: ""; display: block; height: 100%; width: 92%; background: linear-gradient(90deg, var(--doubt), var(--phone)); }
+  .bar b { font-weight: 800; font-variant-numeric: tabular-nums; }
+  .player video { display: block; width: 100%; max-width: 100%; aspect-ratio: 1240 / 936; background: #000; border: 1px solid var(--win-line); border-radius: 8px; }
+  .caption { font-size: 14px; color: var(--ink-soft); }
+
+  /* Soubory */
+  .files { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+  .file { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 3px 12px; align-items: center; background: var(--win-2); border: 1px solid var(--win-line); border-radius: 8px; padding: 12px; text-align: left; }
+  .file:hover { border-color: #3d4b5c; }
+  .file .glyph { grid-row: span 2; width: 42px; height: 42px; }
+  .file .glyph svg { width: 22px; height: 22px; }
+  .file .name { font-family: var(--font-mono); font-size: 13px; overflow-wrap: anywhere; }
+  .file .what { color: var(--ink-faint); font-size: 13.5px; }
+  .needs { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 6px 16px; }
+  .needs li { display: flex; gap: 10px; align-items: baseline; color: var(--ink-soft); font-size: 15px; }
+  .needs li::before { content: "✓"; color: var(--phone); font-weight: 800; }
+
+  /* Skript */
+  .progress { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; }
+  .progress .track { height: 10px; border-radius: 5px; background: #2b3542; overflow: hidden; }
+  .progress .fill { height: 100%; width: 0%; background: var(--phone); transition: width 0.35s ease; }
+  .progress output { font-weight: 800; font-variant-numeric: tabular-nums; min-width: 4ch; text-align: right; }
+  .steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; counter-reset: s; }
+  .step { counter-increment: s; background: var(--win-2); border: 1px solid var(--win-line); border-radius: 10px; padding: 14px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px; transition: border-color 0.2s, background 0.2s; }
+  .step:has(input:checked) { border-color: rgba(35, 164, 85, 0.65); background: #172a22; }
+  .tick { position: relative; width: 34px; height: 34px; flex: none; }
+  .tick input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+  .tick span { position: absolute; inset: 0; border-radius: 8px; border: 2px solid var(--ink-faint); display: grid; place-items: center; font-weight: 900; font-size: 15px; color: var(--ink-soft); pointer-events: none; }
+  .tick span::before { content: counter(s); }
+  .tick input:checked + span { background: var(--phone); border-color: var(--phone); color: #fff; }
+  .tick input:checked + span::before { content: "✓"; }
+  .tick input:focus-visible + span { outline: 3px solid var(--doubt); outline-offset: 2px; }
+  .step-body { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .step-body h3 { font-weight: 700; font-size: 17.5px; line-height: 1.25; }
+  .step-body p { color: var(--ink-soft); font-size: 15px; }
+  .linkish { color: var(--doubt); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; text-align: left; }
+  .warn { border-left: 4px solid var(--doubt); background: rgba(245, 197, 66, 0.08); padding: 8px 12px; border-radius: 0 8px 8px 0; font-size: 14px; }
+  .warn b { color: var(--doubt); }
+  .done-msg { display: none; text-align: center; font-weight: 700; color: var(--phone); }
+  .steps:not(:has(input:not(:checked))) + .done-msg { display: block; }
+
+  /* Nastavení */
+  .models { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+  .model { background: var(--win-2); border: 1px solid var(--win-line); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+  .model.best { border-color: rgba(245, 197, 66, 0.6); }
+  .model header { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+  .model h3 { font-weight: 800; font-size: 20px; }
+  .pillbadge { font-size: 12px; font-weight: 700; background: var(--doubt); color: var(--chrome-ink); padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+  .specs { display: grid; grid-template-columns: auto 1fr; gap: 5px 14px; margin: 0; font-size: 14.5px; }
+  .specs dt { color: var(--ink-faint); }
+  .specs dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .meter { display: flex; gap: 4px; padding-top: 6px; }
+  .meter i { width: 18px; height: 8px; border-radius: 2px; background: #2b3542; }
+  .meter i.on { background: var(--phone); }
+  .model p { color: var(--ink-soft); font-size: 14.5px; }
+
+  /* Malwarebits */
+  .scan { display: flex; align-items: center; gap: 12px; font-weight: 600; }
+  .scan .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--phone); box-shadow: 0 0 0 4px rgba(35,164,85,0.2); }
+  .faq { display: flex; flex-direction: column; gap: 8px; }
+  details { background: var(--win-2); border: 1px solid var(--win-line); border-radius: 8px; }
+  summary { cursor: pointer; list-style: none; display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; padding: 12px 14px; font-weight: 600; }
+  summary::-webkit-details-marker { display: none; }
+  summary .sev { width: 9px; height: 9px; border-radius: 2px; background: var(--doubt); }
+  summary::after { content: "Opravit"; font-size: 12.5px; font-weight: 700; color: var(--chrome-ink); background: var(--doubt); border-radius: 6px; padding: 3px 10px; }
+  details[open] summary::after { content: "Zavřít"; background: #3a4655; color: var(--ink); }
+  details > div { padding: 0 14px 13px 35px; color: var(--ink-soft); display: flex; flex-direction: column; gap: 10px; font-size: 15px; }
+
+  /* SmartScreen (Windows look, on purpose) */
+  .window.ss { background: #0067b8; border-color: #00508f; }
+  .window.ss .titlebar { background: #0067b8; color: #fff; }
+  .window.ss .ctrl .x::before, .window.ss .ctrl .x::after { background: #fff; }
+  .window.ss .ctrl .min::after { background: #fff; }
+  .ss .body { font-family: "Segoe UI", system-ui, sans-serif; color: #fff; gap: 14px; padding: 22px 26px; }
+  .ss h4 { font-size: 26px; font-weight: 300; line-height: 1.2; }
+  .ss p { font-size: 14.5px; color: rgba(255,255,255,0.92); }
+  .ss .more { color: #fff; text-decoration: underline; text-underline-offset: 3px; font-size: 14.5px; align-self: flex-start; }
+  .ss dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: 14.5px; margin: 0; }
+  .ss dt { opacity: 0.85; }
+  .ss dd { margin: 0; font-weight: 600; }
+  .ss .row { display: flex; justify-content: flex-end; gap: 8px; margin-top: auto; flex-wrap: wrap; }
+  .ss .wbtn { border: 1px solid rgba(255,255,255,0.9); padding: 6px 18px; font-size: 14.5px; min-width: 110px; }
+  .ss .wbtn:hover { background: rgba(255,255,255,0.14); }
+  .ss .hint { background: rgba(0,0,0,0.22); border-radius: 6px; padding: 8px 12px; font-size: 13.5px; }
+
+  /* Hub simulation (the hub's own dark/yellow look) */
+  .window.hubwin { background: #111318; border-color: #000; }
+  .hubwin .body { font-family: "Segoe UI", system-ui, sans-serif; gap: 12px; }
+  .hubwin .k { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; color: #8b91a1; }
+  .hubwin .head { display: flex; gap: 12px; align-items: center; }
+  .hubwin .tile { width: 46px; height: 46px; border-radius: 12px; background: var(--hub); display: grid; place-items: center; flex: none; }
+  .hubwin .tile svg { width: 24px; height: 24px; }
+  .hubwin .head b { font-size: 17px; }
+  .hubwin small { display: block; color: #8b91a1; font-size: 12.5px; }
+  .hubwin .desc { color: #b5bac6; font-size: 14px; }
+  .hubwin .dl { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; background: #1b1e26; border-radius: 10px; padding: 10px 12px; font-size: 14.5px; text-align: left; width: 100%; }
+  .sw { width: 40px; height: 22px; border-radius: 11px; background: #3a3f4c; position: relative; flex: none; transition: background 0.15s; }
+  .sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: left 0.15s; }
+  [aria-checked="true"] .sw { background: var(--hub); }
+  [aria-checked="true"] .sw::after { left: 21px; }
+  .hubwin .btns { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
+  .hbtn { border-radius: 10px; padding: 9px 18px; font-weight: 600; font-size: 14px; background: #2e3342; }
+  .hbtn:hover { background: #3a4053; }
+  .hbtn.p { background: var(--hub); color: var(--hub-ink); }
+  .hbtn.p:hover { background: #ffd067; }
+  .hbtn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .hprog { display: flex; flex-direction: column; gap: 8px; }
+  .hprog .row { display: flex; justify-content: space-between; gap: 10px; font-size: 13.5px; }
+  .hprog .row span:last-child { color: #8b91a1; font-variant-numeric: tabular-nums; }
+  .hprog .track { height: 6px; border-radius: 3px; background: #2e3342; overflow: hidden; }
+  .hprog .fill { height: 100%; width: 0; background: var(--hub); }
+  .hdone { display: flex; gap: 10px; align-items: center; background: rgba(110, 231, 160, 0.1); border: 1px solid rgba(110, 231, 160, 0.4); border-radius: 10px; padding: 10px 12px; font-size: 14.5px; }
+  .hdone i { width: 10px; height: 10px; border-radius: 50%; background: #6ee7a0; flex: none; }
+  .demo { font-size: 12px; color: #8b91a1; text-align: center; }
+
+  /* Knihovna modů (hub look) */
+  .lib-start { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 16px; align-items: center; background: linear-gradient(135deg, rgba(255,194,61,0.16), rgba(255,194,61,0.05)); border: 1px solid rgba(255,194,61,0.45); border-radius: 14px; padding: 16px; font-family: "Segoe UI", system-ui, sans-serif; }
+  .lib-start .tile { grid-row: span 2; }
+  .lib-start b { font-size: 16px; }
+  .lib-start p { color: #c4c9d4; font-size: 14px; }
+  .lib-start .dlrow { grid-column: 1 / -1; }
+  .lib-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .lib-card { background: #1b1e26; border: 1.5px solid #2a2f3b; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 12px; font-family: "Segoe UI", system-ui, sans-serif; }
+  .lib-card:hover { border-color: rgba(255,194,61,0.5); }
+  .lib-card .head { display: flex; gap: 12px; align-items: center; }
+  .lib-card .head b { font-size: 16px; }
+  .lib-card .desc { color: #b5bac6; font-size: 13.5px; line-height: 1.5; flex: 1; }
+  .lib-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .lib-tags span { background: #2e3342; border-radius: 8px; padding: 2px 9px; font-size: 12px; }
+  .lib-meta { font-size: 12.5px; color: #8b91a1; }
+  .dlrow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .dlbtn { text-decoration: none; display: inline-flex; align-items: center; gap: 8px; border-radius: 10px; padding: 9px 16px; font-weight: 600; font-size: 14px; background: var(--hub); color: var(--hub-ink); font-family: "Segoe UI", system-ui, sans-serif; }
+  .dlbtn:hover { background: #ffd067; }
+  .dlbtn svg { width: 16px; height: 16px; }
+  .tile { width: 46px; height: 46px; border-radius: 12px; background: var(--hub); display: grid; place-items: center; flex: none; }
+  .tile svg { width: 24px; height: 24px; }
+  .lib-how { font-size: 13.5px; color: #8b91a1; font-family: "Segoe UI", system-ui, sans-serif; }
+
+  /* ---------- Taskbar & Start ---------- */
+  .taskbar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 9000;
+    height: calc(var(--tb-h) + env(safe-area-inset-bottom, 0px));
+    background: var(--taskbar); border-top: 1px solid #0b0e12;
+    padding-left: max(8px, env(safe-area-inset-left, 0px));
+    padding-right: max(14px, env(safe-area-inset-right, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .start { width: 42px; height: 42px; border-radius: 6px; background: #2f7bd6; display: grid; place-items: center; flex: none; }
+  .start:hover, .start[aria-expanded="true"] { background: #3a8be8; }
+  .start svg { width: 22px; height: 22px; }
+  .tasks { display: flex; gap: 4px; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+  .task { height: 42px; display: flex; align-items: center; gap: 8px; padding: 0 10px; border-radius: 6px; position: relative; flex: none; max-width: 170px; font-size: 13.5px; color: #d7dde7; }
+  .task:hover { background: rgba(255,255,255,0.08); }
+  .task .app.sm { width: 26px; height: 26px; border-radius: 6px; }
+  .task .app.sm svg { width: 16px; height: 16px; }
+  .task span.n { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .task::after { content: ""; position: absolute; bottom: 2px; left: 12px; right: 12px; height: 3px; border-radius: 2px; background: #5d6878; }
+  .task.active { background: rgba(255,255,255,0.1); }
+  .task.active::after { background: #3aa0ff; }
+  .tb-info { margin-left: auto; display: flex; align-items: center; gap: 18px; padding-left: 10px; flex: none; }
+  .money { font-weight: 700; font-size: 12.5px; line-height: 1.35; text-align: right; }
+  .money .a { color: #5fe08f; }
+  .money .b { color: var(--doubt); }
+  .money .c { color: #ff6b81; }
+  .clock { font-size: 14px; text-align: right; line-height: 1.3; color: #fff; font-variant-numeric: tabular-nums; }
+  .startmenu {
+    position: fixed; z-index: 9001; left: max(8px, env(safe-area-inset-left, 0px));
+    bottom: calc(var(--tb-h) + env(safe-area-inset-bottom, 0px) + 6px);
+    width: min(320px, calc(100vw - 16px)); background: #1b222c; border: 1px solid #0b0e12; border-radius: 10px;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.45); padding: 10px; display: flex; flex-direction: column; gap: 2px;
+  }
+  .startmenu .who { display: flex; gap: 10px; align-items: center; padding: 8px 8px 12px; border-bottom: 1px solid #2c3846; margin-bottom: 6px; font-weight: 700; }
+  .startmenu .who small { display: block; font-weight: 400; color: var(--ink-faint); font-size: 12.5px; }
+  .startmenu button { display: flex; align-items: center; gap: 12px; padding: 8px; border-radius: 8px; text-align: left; font-size: 15px; }
+  .startmenu button:hover { background: rgba(255,255,255,0.08); }
+  .startmenu .app.sm { width: 28px; height: 28px; border-radius: 7px; }
+  .startmenu .app.sm svg { width: 17px; height: 17px; }
+  .startmenu hr { border: 0; border-top: 1px solid #2c3846; margin: 6px 0; }
+
+  /* ---------- Phones: windows open full screen ---------- */
+  @media (max-width: 760px) {
+    .icons { grid-auto-flow: row; grid-template-rows: none; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); height: auto; }
+    .window { position: fixed; left: 0 !important; top: 0 !important; width: 100% !important;
+      height: calc(100% - var(--tb-h) - env(safe-area-inset-bottom, 0px)) !important; max-width: none; border-width: 0; padding-top: env(safe-area-inset-top, 0px); }
+    .titlebar { cursor: default; padding-left: max(8px, env(safe-area-inset-left, 0px)); padding-right: max(6px, env(safe-area-inset-right, 0px)); }
+    .ctrl .maxbtn { display: none; }
+    .body { padding: 16px max(16px, env(safe-area-inset-right, 0px)) 20px max(16px, env(safe-area-inset-left, 0px)); }
+    .money { display: none; }
+    .task span.n { display: none; }
+    .task { padding: 0 8px; }
+  }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path fill="#fff" d="M7.2 2.8 9.6 6.4c.4.6.3 1.4-.2 1.9L8 9.6a12 12 0 0 0 6.4 6.4l1.3-1.4c.5-.5 1.3-.6 1.9-.2l3.6 2.4c.7.5.9 1.4.4 2.1l-1 1.5c-.8 1.2-2.3 1.7-3.6 1.2A19 19 0 0 1 2.4 6.2c-.5-1.3 0-2.8 1.2-3.6l1.5-1c.7-.5 1.6-.3 2.1.4Z"/></symbol>
+    <symbol id="i-script" viewBox="0 0 24 24"><path fill="#fff" d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z"/><path fill="#1f86d6" d="M14 2v5h6"/><rect x="7" y="11" width="10" height="1.8" rx=".9" fill="#1f86d6"/><rect x="7" y="14.5" width="10" height="1.8" rx=".9" fill="#1f86d6"/><rect x="7" y="18" width="6" height="1.8" rx=".9" fill="#1f86d6"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path fill="#c99a2e" d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v1H3Z"/><path fill="#fff6d8" d="M3 9h18v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path fill="#fff" d="M10.3 2h3.4l.5 2.6a8 8 0 0 1 1.9 1.1l2.5-.9 1.7 2.9-2 1.7a8 8 0 0 1 0 2.2l2 1.7-1.7 2.9-2.5-.9a8 8 0 0 1-1.9 1.1l-.5 2.6h-3.4l-.5-2.6a8 8 0 0 1-1.9-1.1l-2.5.9-1.7-2.9 2-1.7a8 8 0 0 1 0-2.2l-2-1.7 1.7-2.9 2.5.9a8 8 0 0 1 1.9-1.1Z"/><circle cx="12" cy="12" r="3.2" fill="#6b5bd6"/></symbol>
+    <symbol id="i-malware" viewBox="0 0 24 24"><path fill="#fff" d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5Z"/><path fill="none" stroke="#ef8a2b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="m8.5 12 2.4 2.4 4.8-5"/></symbol>
+    <symbol id="i-hello" viewBox="0 0 24 24"><path fill="#1c1505" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm-3.5 7a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm7 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM7.6 14h8.8a4.6 4.6 0 0 1-8.8 0Z"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3ZM19 11a7 7 0 0 1-14 0M12 18v3"/></symbol>
+    <symbol id="i-pad" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M7 8h10a4 4 0 0 1 4 4v2.5a2.5 2.5 0 0 1-4.6 1.4L15 14H9l-1.4 1.9A2.5 2.5 0 0 1 3 14.5V12a4 4 0 0 1 4-4ZM8 11v2M7 12h2M15.5 11.5h.01M17 12.8h.01"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2" fill="#1c1505"/><rect x="13" y="3" width="8" height="8" rx="2" fill="#1c1505"/><rect x="3" y="13" width="8" height="8" rx="2" fill="#1c1505"/><path fill="none" stroke="#1c1505" stroke-width="2.2" stroke-linecap="round" d="M17 13.5v7M13.5 17h7"/></symbol>
+    <symbol id="i-wrench" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14.7 6.3a4 4 0 0 0 5 5L21 13l-8 8-2.5-2.5 8-8M14.7 6.3 13 4.6a4 4 0 0 0-5.6 5.6L3 14.6 5.4 17 9.8 12.6a4 4 0 0 0 4.9-6.3Z"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0-5-5m5 5 5-5M4 20h16"/></symbol>
+    <symbol id="i-power" viewBox="0 0 24 24"><path fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" d="M12 3v8M6.3 6.3a8 8 0 1 0 11.4 0"/></symbol>
+  </defs>
+</svg>
+
+<div class="desktop" id="desktop">
+  <nav class="icons" aria-label="Plocha">
+    <button class="icon" data-open="vitej"><span class="app bg-hello"><svg><use href="#i-hello"/></svg></span>Vítej</button>
+    <button class="icon" data-open="knihovna"><span class="app bg-hub"><svg><use href="#i-grid"/></svg></span>Knihovna modů</button>
+    <button class="icon" data-open="telefon"><span class="app bg-phone"><svg><use href="#i-phone"/></svg><span class="badge">1</span></span>Telefon</button>
+    <button class="icon" data-open="skript"><span class="app bg-script"><svg><use href="#i-script"/></svg></span>Skript</button>
+    <button class="icon" data-open="soubory"><span class="app bg-files"><svg><use href="#i-folder"/></svg></span>Soubory</button>
+    <button class="icon" data-open="nastaveni"><span class="app bg-settings"><svg><use href="#i-settings"/></svg></span>Nastavení</button>
+    <button class="icon" data-open="malwarebits"><span class="app bg-malware"><svg><use href="#i-malware"/></svg></span>Malwarebits</button>
+    <button class="icon" data-open="smartscreen"><span class="doc"><span class="app bg-hub"><svg style="color:#1c1505"><use href="#i-pad"/></svg></span><em>.EXE</em></span>SWYF-Hub.exe</button>
+    <button class="icon" data-open="hub"><span class="doc"><span class="app bg-mod"><svg style="color:#ffc23d"><use href="#i-mic"/></svg></span><em>.SWYFMOD</em></span>CzechSpeech.swyfmod</button>
+  </nav>
+</div>
+
+<!-- ===================== Windows ===================== -->
+
+<section class="window" id="vitej" data-title="Vítej" data-icon="bg-hello|i-hello" data-geo="150,30,600,520" role="dialog" aria-labelledby="h-vitej" hidden>
+  <div class="titlebar"><span class="app sm bg-hello"><svg><use href="#i-hello"/></svg></span><span class="t">Vítej</span><span class="ctrl"><button class="minbtn" aria-label="Minimalizovat"><i class="min"></i></button><button class="maxbtn" aria-label="Maximalizovat"><i class="max"></i></button><button class="x" aria-label="Zavřít"><i class="x"></i></button></span></div>
+  <div class="body hello">
+    <h1 id="h-vitej">Oběť ti konečně <mark>rozumí česky.</mark></h1>
+    <p>Hra převádí tvůj hlas na text, který čte AI na druhé straně. S češtinou si základní model moc neporadí. Mod <b>Lepší čeština</b> ho vymění za velký Whisper, takže zvládne šepot, řev i drmolení.</p>
+    <div class="stamps">
+      <span class="stamp"><b>15/15</b> vět přepsaných správně</span>
+      <span class="stamp">funguje v každé lobby</span>
+      <span class="stamp">instalace na pár minut</span>
+    </div>
+    <div class="acts">
+      <button class="act go" data-open="skript">Jak to nainstalovat</button>
+      <button class="act" data-open="knihovna">Knihovna modů</button>
+      <button class="act" data-open="telefon">Ukázka hovoru</button>
+    </div>
+    <p class="tip">Tohle je plocha jako v herním počítači. Ikony otevírají okna, okna jdou přetáhnout za lištu, dole je Start.</p>
+    <p class="tip">Neoficiální fanouškovský mod, s vývojáři hry nesouvisí. Rozpoznávání řeči: OpenAI Whisper přes whisper.cpp.</p>
+  </div>
+</section>
+
+<section class="window hubwin" id="knihovna" data-title="Knihovna modů" data-icon="bg-hub|i-grid" data-geo="200,40,680,620" role="dialog" aria-labelledby="h-lib" hidden>
+  <div class="titlebar"><span class="app sm bg-hub"><svg><use href="#i-grid"/></svg></span><span class="t">Knihovna modů</span><span class="ctrl"><button class="minbtn" aria-label="Minimalizovat"><i class="min"></i></button><button class="maxbtn" aria-label="Maximalizovat"><i class="max"></i></button><button class="x" aria-label="Zavřít"><i class="x"></i></button></span></div>
+  <div class="body">
+    <h2 id="h-lib" style="font-family:'Segoe UI',system-ui,sans-serif;font-weight:600">Knihovna modů</h2>
+    <div class="lib-start">
+      <span class="tile"><svg><use href="#i-grid"/></svg></span>
+      <b>Začínáš? Stáhni balíček SWYF-start</b>
+      <p>SWYF Mod Hub a Lepší čeština v jednom zipu. Rozbal ho a spusť SWYF-Hub.exe.</p>
+      <div class="dlrow"><a class="dlbtn" href="https://github.com/dexhauls/swyf-mods/releases/download/v1.0/SWYF-start.zip" target="_blank" rel="noopener"><svg><use href="#i-download"/></svg>Stáhnout SWYF-start.zip · 6 MB</a></div>
+    </div>
+    <span class="k">MODY</span>
+    <div class="lib-grid">
+      <article class="lib-card">
+        <div class="head"><span class="tile"><svg style="color:#1c1505"><use href="#i-mic"/></svg></span><div><b>Lepší čeština</b><small>verze 1.0.1</small></div></div>
+        <p class="desc">Hra ti rozumí česky přes velký Whisper model, i když šeptáš, křičíš nebo mluvíš nezřetelně. Mění jen tvůj mikrofon.</p>
+        <div class="lib-tags"><span>Mikrofon</span><span>Whisper</span><span>Každá lobby</span></div>
+        <p class="lib-meta">Model si stáhne hub: 1,5–2,9 GB</p>
+        <div class="dlrow"><a class="dlbtn" href="https://github.com/dexhauls/swyf-mods/releases/download/v1.0/CzechSpeech-1.0.1.swyfmod" target="_blank" rel="noopener"><svg><use href="#i-download"/></svg>Stáhnout · 16 KB</a></div>
+      </article>
+      <article class="lib-card">
+        <div class="head"><span class="tile"><svg style="color:#1c1505"><use href="#i-wrench"/></svg></span><div><b>Vývojářské menu</b><small>verze 1.1.0</small></div></div>
+        <p class="desc">Odemkne skryté dev menu hry v moderním vzhledu: rychlost, létající kamera, teleport, spawn předmětů, peníze a další.</p>
+        <div class="lib-tags"><span>F8</span><span>Jen pro hosta</span></div>
+        <p class="lib-meta">Funguje, jen když hostuješ lobby</p>
+        <div class="dlrow"><a class="dlbtn" href="https://github.com/dexhauls/swyf-mods/releases/download/v1.0/DevMenuUnlock-1.1.0.swyfmod" target="_blank" rel="noopener"><svg><use href="#i-download"/></svg>Stáhnout · 27 KB</a></div>
+      </article>
+    </div>
+    <p class="lib-how">Instalace modu: na stažený soubor .swyfmod dvojklikni, nebo ho přetáhni do okna SWYF Mod Hubu. Všechny soubory najdeš i na <a href="https://github.com/dexhauls/swyf-mods/releases/latest" target="_blank" rel="noopener">GitHubu</a>.</p>
+  </div>
+</section>
+
+<section class="window" id="telefon" data-title="Telefon" data-icon="bg-phone|i-phone" data-geo="560,70,600,620" role="dialog" aria-label="Telefon, ukázka hovoru" hidden>
+  <div class="titlebar"><span class="app sm bg-phone"><svg><use href="#i-phone"/></svg></span><span class="t">Telefon</span><span class="ctrl"><button class="minbtn" aria-label="Minimalizovat"><i class="min"></i></button><button class="maxbtn" aria-label="Maximalizovat"><i class="max"></i></button><button class="x" aria-label="Zavřít"><i class="x"></i></button></span></div>
+  <div class="body">
+    <div class="panel trust">
+      <span class="label">Důvěra v mod</span>
+      <span class="state">Přesvědčivé</span>
+      <div class="bar"><span></span><b>92%</b></div>
+    </div>
+    <figure class="player" style="margin:0">
+      <video src="rozhovor.mp4" poster="rozhovor.jpg" controls playsinline preload="metadata"></video>
+    </figure>
+    <p class="caption">Skutečný hovor s modem: mluvím česky do mikrofonu, hra to přepíše a „František Ředitel“ odpovídá. Pusť si to se zvukem.</p>
+  </div>
+</section>
+
+<section class="window" id="skript" data-title="Skript · Instalace" data-icon="bg-script|i-script" data-geo="220,40,640,640" role="dialog" aria-labelledby="h-skript" hidden>
+  <div class="titlebar"><span class="app sm bg-script"><svg><use href="#i-script"/></svg></span><span class="t">Skript · Instalace</span><span class="ctrl"><button class="minbtn" aria-label="Minimalizovat"><i class="min"></i></button><button class="maxbtn" aria-label="Maximalizovat"><i class="max"></i></button><button class="x" aria-label="Zavřít"><i class="x"></i></button></span></div>
+  <div class="body">
+    <h2 id="h-skript">4 kroky a jsi hotový</h2>
+    <div class="progress" aria-hidden="true"><div class="track"><div class="fill" id="fill"></div></div><output id="pct">0 %</output></div>
+    <ol class="steps">
+      <li class="step">
+        <label class="tick"><input type="checkbox" id="krok1" aria-label="Krok 1 hotový"><span></span></label>
+        <div class="step-body">
+          <h3>Stáhni SWYF-start.zip a spusť SWYF-Hub.exe</h3>
+          <div class="dlrow"><a class="dlbtn" href="https://github.com/dexhauls/swyf-mods/releases/download/v1.0/SWYF-start.zip" target="_blank" rel="noopener"><svg><use href="#i-download"/></svg>Stáhnout SWYF-start.zip · 6 MB</a></div>
+          <p>Zip rozbal a spusť SWYF-Hub.exe. Hub sám najde hru ve Steamu. Windows možná ukáže modré okno, protože program nemá podpis: klikni na <b>Další informace</b> a pak <b>Přesto spustit</b>.</p>
+          <button class="linkish" data-open="smartscreen">Vyzkoušet si to modré okno nanečisto</button>
+        </div>
+      </li>
+      <li class="step">
+        <label class="tick"><input type="checkbox" id="krok2" aria-label="Krok 2 hotový"><span></span></label>
+        <div class="step-body">
+          <h3>Zavři hru a klikni na „Nainstalovat základ“</h3>
+          <p>Jen poprvé. Hub přidá do hry mod loader a Mod Manager, díky kterému jdou mody zapínat a vypínat i za běhu hry.</p>
+          <div class="warn"><b>Hra musí být zavřená.</b> Jen u tohohle kroku.</div>
+        </div>
+      </li>
+      <li class="step">
+        <label class="tick"><input type="checkbox" id="krok3" aria-label="Krok 3 hotový"><span></span></label>
+        <div class="step-body">
+          <h3>Dvojklikni na CzechSpeech-1.0.1.swyfmod</h3>
+          <p>Mod se otevře v hubu (nebo ho do hubu přetáhni). Nech zapnutý model large-v3 a klikni na <b>Nainstalovat</b>. Stahování trvá pár minut.</p>
+          <button class="linkish" data-open="hub">Ukázat, jak to v hubu vypadá</button>
+        </div>
+      </li>
+      <li class="step">
+        <label class="tick"><input type="checkbox" id="krok4" aria-label="Krok 4 hotový"><span></span></label>
+        <div class="step-body">
+          <h3>Spusť hru a telefonuj česky</h3>
+          <p>Hru zapínej normálně přes Steam. Vpravo dole na chvilku vyskočí „Načteno: Lepší čeština“. Víc nic nastavovat nemusíš.</p>
+          <div class="warn"><b>Hra už běžela?</b> Restartuj ji, model se načítá při startu.</div>
+        </div>
+      </li>
+    </ol>
+    <p class="done-msg">Hotovo. Jdi někoho vyscamovat.</p>
+  </div>
+</section>
+
+<section class="window" id="soubory" data-title="Soubory" data-icon="bg-files|i-folder" data-geo="260,110,560,420" role="dialog" aria-label="Soubory" hidden>
+  <div class="titlebar"><span class="app sm bg-files"><svg><use href="#i-folder"/></svg></span><span class="t">Soubory · Co ode mě dostaneš</span><span class="ctrl"><button class="minbtn" aria-label="Minimalizovat"><i class="min"></i></button><button class="maxbtn" aria-label="Maximalizovat"><i class="max"></i></button><button class="x" aria-label="Zavřít"><i class="x"></i></button></span></div>
+  <div class="body">
+    <div class="files">
+      <button class="file" data-open="smartscreen">
+        <span class="app glyph bg-hub"><svg style="color:#1c1505"><use href="#i-pad"/></svg></span>
+        <span class="name">SWYF-Hub.exe</span>
+        <span class="what">Program na instalaci modů, 6 MB</span>
+      </button>
+      <button class="file" data-open="hub">
+        <span class="app glyph bg-mod"><svg style="color:#ffc23d"><use href="#i-mic"/></svg></span>
+        <span class="name">CzechSpeech-1.0.1.swyfmod</span>
+        <span class="what">Samotný mod, model si stáhne sám</span>
+      </button>
+    </div>
+    <div class="dlrow"><a class="dlbtn" href="https://github.com/dexhauls/swyf-mods/releases/download/v1.0/SWYF-start.zip" target="_blank" rel="noopener"><svg><use href="#i-download"/></svg>Stáhnout oba v SWYF-start.zip · 6 MB</a></div>
+    <p class="lead">Zip rozbal kamkoli, třeba na plochu. Další mody najdeš v Knihovně modů.</p>
+    <ul class="needs">
+      <li>Windows 10 nebo 11</li>
+      <li>Hra ze Steamu</li>
+      <li>3–4 GB místa na disku</li>
+      <li>Grafika se 4 GB paměti (stačí i 2 GB)</li>
+    </ul>
+  </div>
+</section>
+
+<section class="window" id="nastaveni" data-title="Nastavení" data-icon="bg-settings|i-settings" data-geo="320,80,560,470" role="dialog" aria-label="Nastavení, který model" hidden>
+  <div class="titlebar"><span class="app sm bg-settings"><svg><use href="#i-settings"/></svg></span><span class="t">Nastavení · Který model</span><span class="ctrl"><button class="minbtn" aria-label="Minimalizovat"><i class="min"></i></button><button class="maxbtn" aria-label="Maximalizovat"><i class="max"></i></button><button class="x" aria-label="Zavřít"><i class="x"></i></button></span></div>
+  <div class="body">
+    <div class="models">
+      <article class="model best">
+        <header><h3>large-v3</h3><span class="pillbadge">doporučeno</span></header>
+        <dl class="specs">
+          <dt>Stažení</dt><dd>2,9 GB</dd>
+          <dt>Paměť grafiky</dt><dd>asi 4 GB</dd>
+          <dt>Kvalita</dt><dd><span class="meter" aria-label="5 z 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></dd>
+          <dt>Rychlost</dt><dd><span class="meter" aria-label="3 z 5"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></dd>
+        </dl>
+        <p>Nejlepší čeština, hlavně na šepot a nezřetelnou řeč.</p>
+      </article>
+      <article class="model">
+        <header><h3>turbo</h3></header>
+        <dl class="specs">
+          <dt>Stažení</dt><dd>1,5 GB</dd>
+          <dt>Paměť grafiky</dt><dd>asi 2 GB</dd>
+          <dt>Kvalita</dt><dd><span class="meter" aria-label="4 z 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></dd>
+          <dt>Rychlost</dt><dd><span class="meter" aria-label="5 z 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></dd>
+        </dl>
+        <p>Asi 3× rychlejší, o kousek horší. Na slabší grafiku a notebooky.</p>
+      </article>
+    </div>
+    <p class="lead">Můžeš stáhnout oba. Mod použije large-v3, a když ho smažeš, vezme turbo.</p>
+  </div>
+</section>
+
+<section class="window" id="malwarebits" data-title="Malwarebits" data-icon="bg-malware|i-malware" data-geo="380,50,600,560" role="dialog" aria-label="Malwarebits, když něco nejde" hidden>
+  <div class="titlebar"><span class="app sm bg-malware"><svg><use href="#i-malware"/></svg></span><span class="t">Malwarebits · Když něco nejde</span><span class="ctrl"><button class="minbtn" aria-label="Minimalizovat"><i class="min"></i></button><button class="maxbtn" aria-label="Maximalizovat"><i class="max"></i></button><button class="x" aria-label="Zavřít"><i class="x"></i></button></span></div>
+  <div class="body">
+    <p class="scan"><span class="dot" aria-hidden="true"></span>Nalezené problémy: 6. Všechny se dají opravit.</p>
+    <div class="faq">
+      <details><summary><span class="sev" aria-hidden="true"></span>Hub nenašel hru</summary>
+        <div><p>Klikni na <b>Vybrat složku hry</b>. Kde hra je, zjistíš ve Steamu: pravý klik na hru → Spravovat → Procházet místní soubory. Je to složka s <code>Scam With Your Friends.exe</code>.</p></div></details>
+      <details><summary><span class="sev" aria-hidden="true"></span>Hra se seká nebo počítači dochází paměť</summary>
+        <div><p>Přepni na model turbo. Velký model si vezme asi 4 GB paměti grafiky a hra s ním kolem 8,5 GB RAM.</p><p>Zavři programy, které na pozadí nahrávají hru, třeba SteelSeries GG Moments. Umí sežrat desítky GB paměti.</p></div></details>
+      <details><summary><span class="sev" aria-hidden="true"></span>Chci přepnout na turbo</summary>
+        <div><p>Dvojklikni znovu na <code>CzechSpeech-1.0.1.swyfmod</code>, zapni model turbo a nainstaluj. Pak v souboru <code>BepInEx\config\dex.swyf.czechspeech.cfg</code> ve složce hry přepiš <code>Model = large-v3</code> na <code>Model = turbo</code>. Projeví se po restartu hry.</p></div></details>
+      <details><summary><span class="sev" aria-hidden="true"></span>Funguje to i v lobby u kamaráda?</summary>
+        <div><p>Ano. Mod mění jen to, jak se převádí tvůj hlas. Funguje v jakékoli lobby a ostatní ho mít nemusí.</p></div></details>
+      <details><summary><span class="sev" aria-hidden="true"></span>Mikrofon nic nepřepisuje</summary>
+        <div><p>Ve hře v nastavení zvuku zkontroluj, že je vybraný správný mikrofon. Mod bere stejný vstup jako hra, jen ho líp přepisuje.</p></div></details>
+      <details><summary><span class="sev" aria-hidden="true"></span>Chci mod vypnout nebo smazat</summary>
+        <div><p>Otevři SWYF Mod Hub (najdeš ho v nabídce Start). U modu je přepínač na vypnutí a koš na smazání. <b>Odinstalovat vše</b> vrátí hru do původního stavu.</p></div></details>
+    </div>
+  </div>
+</section>
+
+<section class="window ss" id="smartscreen" data-title="Windows chránil počítač" data-icon="bg-hub|i-pad" data-geo="300,90,520,400" role="dialog" aria-labelledby="h-ss" hidden>
+  <div class="titlebar"><span class="t">Ukázka: modré okno Windows</span><span class="ctrl"><button class="minbtn" aria-label="Minimalizovat"><i class="min"></i></button><button class="x" aria-label="Zavřít"><i class="x"></i></button></span></div>
+  <div class="body">
+    <h4 id="h-ss">Systém Windows ochránil počítač</h4>
+    <p>Filtr SmartScreen v programu Windows Defender zabránil spuštění nerozpoznané aplikace. Spuštění této aplikace by mohlo ohrozit počítač.</p>
+    <button class="more" id="ss-more">Další informace</button>
+    <dl id="ss-info" hidden><dt>Aplikace:</dt><dd>SWYF-Hub.exe</dd><dt>Vydavatel:</dt><dd>Neznámý vydavatel</dd></dl>
+    <p class="hint" id="ss-hint">Tohle je jen ukázka. Klikni na <b>Další informace</b>.</p>
+    <div class="row">
+      <button class="wbtn" id="ss-run" hidden>Přesto spustit</button>
+      <button class="wbtn" data-close>Nespouštět</button>
+    </div>
+  </div>
+</section>
+
+<section class="window hubwin" id="hub" data-title="SWYF Mod Hub" data-icon="bg-hub|i-pad" data-geo="420,60,500,520" role="dialog" aria-labelledby="h-hub" hidden>
+  <div class="titlebar"><span class="app sm bg-hub"><svg style="color:#1c1505"><use href="#i-pad"/></svg></span><span class="t">SWYF Mod Hub (ukázka)</span><span class="ctrl"><button class="minbtn" aria-label="Minimalizovat"><i class="min"></i></button><button class="maxbtn" aria-label="Maximalizovat"><i class="max"></i></button><button class="x" aria-label="Zavřít"><i class="x"></i></button></span></div>
+  <div class="body">
+    <span class="k">NOVÝ MOD</span>
+    <div class="head"><span class="tile"><svg style="color:#1c1505"><use href="#i-mic"/></svg></span><div><b id="h-hub">Lepší čeština</b><small>verze 1.0.1</small></div></div>
+    <p class="desc">Výrazně lepší rozpoznávání řeči v češtině přes velký Whisper model, i když šeptáš, křičíš nebo mluvíš nezřetelně.</p>
+    <span class="k">K MODU SE STÁHNE</span>
+    <button class="dl" role="switch" aria-checked="true" data-size="2.9"><div><b>Model large-v3</b><small>2,9 GB · nejlepší čeština</small></div><span class="sw"></span></button>
+    <button class="dl" role="switch" aria-checked="false" data-size="1.5"><div><b>Model turbo</b><small>1,5 GB · pro slabší PC</small></div><span class="sw"></span></button>
+    <div class="hprog" id="hub-prog" hidden>
+      <div class="row"><span id="hub-label">Stahuju…</span><span id="hub-detail"></span></div>
+      <div class="track"><div class="fill" id="hub-fill"></div></div>
+    </div>
+    <div class="hdone" id="hub-done" hidden><i aria-hidden="true"></i><span>Lepší čeština nainstalována. Teď spusť hru přes Steam.</span></div>
+    <div class="btns">
+      <button class="hbtn" data-close>Zavřít</button>
+      <button class="hbtn p" id="hub-install">Nainstalovat</button>
+    </div>
+    <p class="demo">Ukázka, nic se doopravdy nestahuje.</p>
+  </div>
+</section>
+
+<!-- ===================== Taskbar ===================== -->
+<div class="startmenu" id="startmenu" hidden>
+  <div class="who"><span class="app sm bg-hub" style="width:36px;height:36px;border-radius:9px"><svg style="color:#1c1505;width:20px;height:20px"><use href="#i-pad"/></svg></span><div>Lepší čeština<small>mod pro Scam With Your Friends</small></div></div>
+  <button data-open="vitej"><span class="app sm bg-hello"><svg><use href="#i-hello"/></svg></span>Vítej</button>
+  <button data-open="knihovna"><span class="app sm bg-hub"><svg><use href="#i-grid"/></svg></span>Knihovna modů</button>
+  <button data-open="telefon"><span class="app sm bg-phone"><svg><use href="#i-phone"/></svg></span>Ukázka hovoru</button>
+  <button data-open="skript"><span class="app sm bg-script"><svg><use href="#i-script"/></svg></span>Instalace krok za krokem</button>
+  <button data-open="soubory"><span class="app sm bg-files"><svg><use href="#i-folder"/></svg></span>Co ode mě dostaneš</button>
+  <button data-open="nastaveni"><span class="app sm bg-settings"><svg><use href="#i-settings"/></svg></span>Který model</button>
+  <button data-open="malwarebits"><span class="app sm bg-malware"><svg><use href="#i-malware"/></svg></span>Když něco nejde</button>
+  <hr>
+  <button id="close-all"><span class="app sm" style="background:#3a4655"><svg><use href="#i-power"/></svg></span>Zavřít všechna okna</button>
+</div>
+
+<div class="taskbar" role="navigation" aria-label="Lišta">
+  <button class="start" id="start" aria-label="Start" aria-expanded="false" aria-controls="startmenu"><svg><use href="#i-power"/></svg></button>
+  <div class="tasks" id="tasks"></div>
+  <div class="tb-info">
+    <div class="money" aria-hidden="true">
+      <div class="a">MOD $0 · ZDARMA</div>
+      <div class="b">ČEŠTINA 100 %</div>
+      <div class="c">HODNOCENÍ VÝKONU 15/15</div>
+    </div>
+    <div class="clock"><div id="time">17:47</div><div id="date">17.10.2026</div></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var desktop = document.getElementById("desktop");
+  var tasks = document.getElementById("tasks");
+  var startBtn = document.getElementById("start");
+  var startMenu = document.getElementById("startmenu");
+  var phone = window.matchMedia("(max-width: 760px)");
+  var z = 10;
+  var order = []; // open windows, oldest first (taskbar order)
+  var placed = {};
+
+  function win(id) { return document.getElementById(id); }
+  function area() {
+    var r = desktop.getBoundingClientRect();
+    return { w: r.width, h: r.height };
+  }
+
+  // ---------- Window manager ----------
+  function place(w) {
+    if (placed[w.id] || phone.matches) return;
+    var g = (w.dataset.geo || "200,60,560,480").split(",").map(Number);
+    var a = area();
+    var width = Math.min(g[2], a.w - 16);
+    var height = Math.min(g[3], a.h - 16);
+    var left = Math.max(8, Math.min(g[0], a.w - width - 8));
+    var top = Math.max(8, Math.min(g[1], a.h - height - 8));
+    w.style.width = width + "px";
+    w.style.height = height + "px";
+    w.style.left = left + "px";
+    w.style.top = top + "px";
+    placed[w.id] = true;
+  }
+
+  function focus(w) {
+    document.querySelectorAll(".window.focused").forEach(function (o) { if (o !== w) o.classList.remove("focused"); });
+    w.style.zIndex = ++z;
+    w.classList.add("focused");
+    renderTasks();
+  }
+
+  function open(id) {
+    var w = win(id);
+    if (!w) return;
+    closeStart();
+    if (w.parentElement !== desktop) desktop.appendChild(w);
+    var wasHidden = w.hidden;
+    place(w);
+    w.hidden = false;
+    w.dataset.min = "";
+    if (order.indexOf(id) < 0) order.push(id);
+    if (wasHidden) {
+      w.classList.remove("opening");
+      void w.offsetWidth;
+      w.classList.add("opening");
+    }
+    focus(w);
+    var title = w.querySelector(".body");
+    if (title && wasHidden) title.scrollTop = 0;
+  }
+
+  function stopMedia(w) { w.querySelectorAll("video").forEach(function (v) { v.pause(); }); }
+
+  function close(id) {
+    var w = win(id);
+    if (!w) return;
+    stopMedia(w);
+    w.hidden = true;
+    w.classList.remove("focused", "maxed");
+    order = order.filter(function (o) { return o !== id; });
+    focusTop();
+    renderTasks();
+  }
+
+  function minimize(id) {
+    var w = win(id);
+    stopMedia(w);
+    w.hidden = true;
+    w.dataset.min = "1";
+    w.classList.remove("focused");
+    focusTop();
+    renderTasks();
+  }
+
+  function focusTop() {
+    var best = null;
+    order.forEach(function (id) {
+      var w = win(id);
+      if (!w.hidden && (!best || +w.style.zIndex > +best.style.zIndex)) best = w;
+    });
+    if (best) focus(best);
+  }
+
+  function renderTasks() {
+    tasks.innerHTML = "";
+    order.forEach(function (id) {
+      var w = win(id);
+      var icon = (w.dataset.icon || "bg-hub|i-pad").split("|");
+      var b = document.createElement("button");
+      b.className = "task" + (w.classList.contains("focused") && !w.hidden ? " active" : "");
+      b.setAttribute("aria-label", w.dataset.title);
+      b.innerHTML = '<span class="app sm ' + icon[0] + '"><svg' + (icon[1] === "i-pad" ? ' style="color:#1c1505"' : "") + '><use href="#' + icon[1] + '"/></svg></span><span class="n"></span>';
+      b.querySelector(".n").textContent = w.dataset.title;
+      b.addEventListener("click", function () {
+        if (w.hidden) open(id);
+        else if (w.classList.contains("focused")) minimize(id);
+        else focus(w);
+      });
+      tasks.appendChild(b);
+    });
+  }
+
+  // Controls inside every window
+  document.querySelectorAll(".window").forEach(function (w) {
+    w.addEventListener("pointerdown", function () { if (!w.classList.contains("focused")) focus(w); });
+    var x = w.querySelector(".ctrl .x");
+    if (x) x.closest("button").addEventListener("click", function () { close(w.id); });
+    var mn = w.querySelector(".minbtn");
+    if (mn) mn.addEventListener("click", function () { minimize(w.id); });
+    var mx = w.querySelector(".maxbtn");
+    if (mx) mx.addEventListener("click", function () { w.classList.toggle("maxed"); });
+    w.querySelectorAll("[data-close]").forEach(function (b) { b.addEventListener("click", function () { close(w.id); }); });
+
+    // Drag by the title bar (desktop only)
+    var bar = w.querySelector(".titlebar");
+    var drag = null;
+    bar.addEventListener("dblclick", function (e) { if (!e.target.closest(".ctrl") && !phone.matches && w.querySelector(".maxbtn")) w.classList.toggle("maxed"); });
+    bar.addEventListener("pointerdown", function (e) {
+      if (e.button !== 0 || e.target.closest(".ctrl") || phone.matches || w.classList.contains("maxed")) return;
+      drag = { x: e.clientX, y: e.clientY, left: w.offsetLeft, top: w.offsetTop };
+      bar.setPointerCapture(e.pointerId);
+      w.classList.add("dragging");
+    });
+    bar.addEventListener("pointermove", function (e) {
+      if (!drag) return;
+      var a = area();
+      var left = drag.left + e.clientX - drag.x;
+      var top = drag.top + e.clientY - drag.y;
+      left = Math.max(-w.offsetWidth + 120, Math.min(left, a.w - 120));
+      top = Math.max(0, Math.min(top, a.h - 40));
+      w.style.left = left + "px";
+      w.style.top = top + "px";
+    });
+    function end() { drag = null; w.classList.remove("dragging"); }
+    bar.addEventListener("pointerup", end);
+    bar.addEventListener("pointercancel", end);
+  });
+
+  // Anything with data-open opens that window
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-open]");
+    if (t) open(t.getAttribute("data-open"));
+  });
+
+  // Start menu
+  function closeStart() { startMenu.hidden = true; startBtn.setAttribute("aria-expanded", "false"); }
+  startBtn.addEventListener("click", function () {
+    var show = startMenu.hidden;
+    startMenu.hidden = !show;
+    startBtn.setAttribute("aria-expanded", String(show));
+  });
+  document.addEventListener("pointerdown", function (e) {
+    if (!startMenu.hidden && !e.target.closest("#startmenu") && !e.target.closest("#start")) closeStart();
+  });
+  document.getElementById("close-all").addEventListener("click", function () {
+    order.slice().forEach(close);
+    closeStart();
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") return;
+    if (!startMenu.hidden) { closeStart(); return; }
+    var f = document.querySelector(".window.focused");
+    if (f) close(f.id);
+  });
+
+  // ---------- SmartScreen practice ----------
+  document.getElementById("ss-more").addEventListener("click", function () {
+    document.getElementById("ss-info").hidden = false;
+    document.getElementById("ss-run").hidden = false;
+    this.hidden = true;
+    document.getElementById("ss-hint").innerHTML = "Teď klikni na <b>Přesto spustit</b>.";
+  });
+  document.getElementById("ss-run").addEventListener("click", function () {
+    close("smartscreen");
+    document.getElementById("ss-info").hidden = true;
+    this.hidden = true;
+    document.getElementById("ss-more").hidden = false;
+    document.getElementById("ss-hint").innerHTML = "Tohle je jen ukázka. Klikni na <b>Další informace</b>.";
+    open("hub");
+  });
+
+  // ---------- Hub simulation ----------
+  var dls = Array.prototype.slice.call(document.querySelectorAll("#hub .dl"));
+  var installBtn = document.getElementById("hub-install");
+  dls.forEach(function (b) {
+    b.addEventListener("click", function () {
+      if (installBtn.disabled) return;
+      b.setAttribute("aria-checked", b.getAttribute("aria-checked") === "true" ? "false" : "true");
+    });
+  });
+  installBtn.addEventListener("click", function () {
+    var chosen = dls.filter(function (b) { return b.getAttribute("aria-checked") === "true"; });
+    var total = chosen.reduce(function (s, b) { return s + parseFloat(b.dataset.size); }, 0);
+    var prog = document.getElementById("hub-prog"), fill = document.getElementById("hub-fill");
+    var label = document.getElementById("hub-label"), detail = document.getElementById("hub-detail");
+    var done = document.getElementById("hub-done");
+    installBtn.disabled = true;
+    done.hidden = true;
+    prog.hidden = false;
+    var start = performance.now(), dur = total > 0 ? 3200 : 700;
+    function step(now) {
+      var p = Math.min(1, (now - start) / dur);
+      fill.style.width = (p * 100) + "%";
+      if (total > 0) {
+        label.textContent = "Stahuju " + (chosen.length > 1 ? "modely" : chosen[0].querySelector("b").textContent);
+        detail.textContent = (p * total).toFixed(1).replace(".", ",") + " GB z " + total.toFixed(1).replace(".", ",") + " GB";
+      } else {
+        label.textContent = "Rozbaluju soubory";
+        detail.textContent = Math.round(p * 100) + " %";
+      }
+      if (p < 1) requestAnimationFrame(step);
+      else {
+        prog.hidden = true;
+        done.hidden = false;
+        installBtn.disabled = false;
+        installBtn.textContent = "Nainstalovat znovu";
+        var c = document.getElementById("krok3");
+        if (c && !c.checked) { c.checked = true; c.dispatchEvent(new Event("change")); }
+      }
+    }
+    requestAnimationFrame(step);
+  });
+
+  // ---------- Steps (remembered in this browser only) ----------
+  var boxes = Array.prototype.slice.call(document.querySelectorAll(".tick input"));
+  var fill = document.getElementById("fill"), pct = document.getElementById("pct");
+  function saveSteps() {
+    try { localStorage.setItem("swyf-guide-steps", JSON.stringify(boxes.map(function (b) { return b.checked; }))); } catch (e) {}
+  }
+  function updateSteps() {
+    var n = boxes.filter(function (b) { return b.checked; }).length;
+    var p = Math.round(n / boxes.length * 100);
+    fill.style.width = p + "%";
+    pct.textContent = p + " %";
+  }
+  try {
+    var saved = JSON.parse(localStorage.getItem("swyf-guide-steps") || "[]");
+    boxes.forEach(function (b, i) { b.checked = !!saved[i]; });
+  } catch (e) {}
+  boxes.forEach(function (b) { b.addEventListener("change", function () { updateSteps(); saveSteps(); }); });
+  updateSteps();
+
+  // ---------- Clock ----------
+  var t = document.getElementById("time"), d = document.getElementById("date");
+  function tick() {
+    var n = new Date();
+    t.textContent = n.toLocaleTimeString("cs-CZ", { hour: "2-digit", minute: "2-digit" });
+    d.textContent = n.getDate() + "." + (n.getMonth() + 1) + "." + n.getFullYear();
+  }
+  tick();
+  setInterval(tick, 15000);
+
+  // ---------- First screen ----------
+  var hash = (location.hash || "").replace("#", "");
+  if (hash && win(hash) && win(hash).classList.contains("window")) {
+    open(hash);
+  } else if (phone.matches) {
+    open("vitej");
+  } else {
+    open("telefon");
+    open("vitej");
+  }
+  window.addEventListener("resize", function () {
+    var a = area();
+    order.forEach(function (id) {
+      var w = win(id);
+      if (phone.matches || w.classList.contains("maxed")) return;
+      var left = Math.min(w.offsetLeft, Math.max(8, a.w - w.offsetWidth - 8));
+      var top = Math.min(w.offsetTop, Math.max(8, a.h - 60));
+      w.style.left = Math.max(0, left) + "px";
+      w.style.top = Math.max(0, top) + "px";
+    });
+  });
+})();
+</script>
+
+</html>
