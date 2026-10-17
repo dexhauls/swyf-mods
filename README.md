@@ -2,7 +2,7 @@
 
 Neoficiální fanouškovské mody do hry **Scam With Your Friends** (Steam). S vývojáři hry nesouvisí.
 
-**Návod s ukázkou:** https://claude.ai/artifact/44qPxWrhUXsrW3oBmKKaYS
+**Návod s ukázkou:** https://dexhauls.github.io/swyf-mods/
 
 ## Stažení
 
