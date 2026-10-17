@@ -12,8 +12,8 @@ Všechno je v [nejnovějším vydání](https://github.com/dexhauls/swyf-mods/re
 |---|---|
 | `SWYF-start.zip` | Pro nováčky: SWYF Mod Hub + mod Lepší čeština v jednom zipu |
 | `SWYF-Hub.exe` | SWYF Mod Hub: instaluje, zapíná a odebírá mody |
-| `CzechSpeech.swyfmod` | **Lepší čeština**: hra ti rozumí česky přes velký Whisper model (šepot, křik, drmolení) |
-| `DevMenuUnlock.swyfmod` | **Vývojářské menu**: odemkne skryté dev menu hry (F8, jen když hostuješ) |
+| `CzechSpeech-1.0.1.swyfmod` | **Lepší čeština**: hra ti rozumí česky přes velký Whisper model (šepot, křik, drmolení) |
+| `DevMenuUnlock-1.1.0.swyfmod` | **Vývojářské menu**: odemkne skryté dev menu hry (F8, jen když hostuješ) |
 
 ## Instalace
 
