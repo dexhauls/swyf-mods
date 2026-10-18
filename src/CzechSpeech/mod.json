@@ -2,7 +2,7 @@
   "id": "CzechSpeech",
   "name": "Lepší čeština",
   "name_en": "Better Czech Speech",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "author": "Dex",
   "description": "Výrazně lepší rozpoznávání řeči v češtině přes velký Whisper model, i když šeptáš, křičíš nebo mluvíš nezřetelně. Mění jen tvůj mikrofon, funguje v každé lobby. Změna modelu se projeví po restartu hry.",
   "description_en": "Much better Czech speech recognition with a large Whisper model, even when you whisper, shout or mumble. Only affects your own microphone, so it works in any lobby. Changing the model takes effect after restarting the game.",
@@ -10,6 +10,40 @@
   "tags": [ "Mikrofon", "Whisper" ],
   "tags_en": [ "Microphone", "Whisper" ],
   "dll": "CzechSpeech.dll",
+  "settings": [
+    {
+      "name": "VÝPOČET ŘEČI",
+      "name_en": "SPEECH RUNS ON",
+      "file": "BepInEx/config/dex.swyf.czechspeech.cfg",
+      "section": "Model",
+      "key": "Device",
+      "default": "auto",
+      "options": [
+        {
+          "value": "auto",
+          "name": "Automaticky",
+          "name_en": "Automatic",
+          "hint": "Grafika, i když ji hra pro tvou kartu zakazuje. Kdyby hra při zkoušce grafiky spadla, další spuštění pojede na procesoru.",
+          "hint_en": "Graphics card, even where the game blocks it for your card. If the game crashes while trying it, the next start uses the processor."
+        },
+        {
+          "value": "gpu",
+          "name": "Grafika",
+          "name_en": "Graphics card",
+          "hint": "Vždy grafika, i po předchozím pádu. Nejrychlejší (asi 1 s na větu).",
+          "hint_en": "Always the graphics card, even after an earlier crash. Fastest (about 1 s per sentence).",
+          "clears": [ "gpu-selhala.txt" ]
+        },
+        {
+          "value": "cpu",
+          "name": "Procesor",
+          "name_en": "Processor",
+          "hint": "Vždy procesor. Pomalejší (2–5 s na větu), ale grafika zůstane jen hře.",
+          "hint_en": "Always the processor. Slower (2–5 s per sentence), but the graphics card stays free for the game."
+        }
+      ]
+    }
+  ],
   "downloads": [
     {
       "id": "large-v3",
@@ -27,8 +61,8 @@
       "id": "turbo",
       "name": "Model turbo",
       "name_en": "turbo model",
-      "description": "Asi 3× rychlejší, o kousek horší. Pro slabší PC (asi 2 GB paměti grafiky).",
-      "description_en": "About 3× faster, slightly less accurate. For weaker PCs (about 2 GB of graphics memory).",
+      "description": "Asi 3× rychlejší, o kousek horší. Stáhni ho, když ti text naskakuje pomalu: na PC, kde hra nepouští Whisper na grafiku (třeba GTX 1650 nebo RX 580), ho mod použije sám.",
+      "description_en": "About 3× faster, slightly less accurate. Get it if text shows up slowly: on PCs where the game keeps Whisper off the graphics card (e.g. GTX 1650 or RX 580), the mod uses it automatically.",
       "url": "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-v3-turbo.bin",
       "sha256": "1fc70f774d38eb169993ac391eea357ef47c88757ef72ee5943879b7e8e2bc69",
       "size": 1624555275,

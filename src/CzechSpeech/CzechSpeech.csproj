@@ -25,6 +25,7 @@
     <Reference Include="UnityEngine" HintPath="$(ManagedDir)\UnityEngine.dll" Private="false" />
     <Reference Include="UnityEngine.CoreModule" HintPath="$(ManagedDir)\UnityEngine.CoreModule.dll" Private="false" />
     <Reference Include="ScriptsAssDef" HintPath="$(ManagedDir)\ScriptsAssDef.dll" Private="false" />
+    <Reference Include="MetaVoiceChat.Core" HintPath="$(ManagedDir)\MetaVoiceChat.Core.dll" Private="false" />
     <Reference Include="Kolkata.Speech" HintPath="$(ManagedDir)\Kolkata.Speech.dll" Private="false" />
     <Reference Include="com.whisper.unity" HintPath="$(ManagedDir)\com.whisper.unity.dll" Private="false" />
   </ItemGroup>

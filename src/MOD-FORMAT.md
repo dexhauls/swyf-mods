@@ -51,7 +51,20 @@ files/...         cokoli, co patří do Mods/<id>/ (DLL, obrázky, configy…)
 - `icon`: hex kód ikony ze Segoe Fluent Icons.
 - `dll`: hlavní DLL ve `files/`.
 - `downloads` (volitelné): velké soubory, které hub stáhne (s kontrolou SHA256) do `Mods/<id>/<path>`. Kamarád si v hubu vybere, které chce. `default: true` = předvybrané.
-- `name_en`, `description_en`, `tags_en` (volitelné, i u položek v `downloads` jde `name_en` a `description_en`): anglické texty. Hub i Mod Manager se řídí jazykem hry: čeština nebo slovenština = české pole, jinak anglické. Když anglické pole chybí, ukáže se české.
+- `settings` (volitelné, hub 1.1.2+): volby, které hub ukáže na kartě modu jako segmentový přepínač. Každá volba je jeden klíč v BepInEx configu:
+  ```json
+  "settings": [{
+    "name": "VÝPOČET ŘEČI", "name_en": "SPEECH RUNS ON",
+    "file": "BepInEx/config/dex.swyf.czechspeech.cfg", "section": "Model", "key": "Device", "default": "auto",
+    "options": [
+      { "value": "auto", "name": "Automaticky", "hint": "Tooltip…" },
+      { "value": "gpu", "name": "Grafika", "clears": [ "gpu-selhala.txt" ] },
+      { "value": "cpu", "name": "Procesor" }
+    ]
+  }]
+  ```
+  `file` je relativně ke složce hry. Hub přepíše jen ten jeden řádek (chybějící soubor, sekci nebo klíč založí, zbytek souboru nechá). `clears` jsou soubory v `Mods/<id>/`, které hub při výběru volby smaže. `hint` se ukáže jako tooltip. Mody čtou config při startu hry, takže změna platí od dalšího spuštění.
+- `name_en`, `description_en`, `tags_en` (volitelné, i u položek v `downloads` jde `name_en` a `description_en`, v `settings` `name_en` a `hint_en`): anglické texty. Hub i Mod Manager se řídí jazykem hry: čeština nebo slovenština = české pole, jinak anglické. Když anglické pole chybí, ukáže se české.
 
 ## Nainstalovaný mod
 

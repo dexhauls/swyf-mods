@@ -45,6 +45,7 @@ namespace SwyfInstaller
         public string IconGlyph { get; set; }
         public List<string> Tags { get; set; }
         public bool Locked { get; set; }
+        public List<SettingRow> Settings { get; set; } = new List<SettingRow>();
 
         public bool Enabled
         {
@@ -67,6 +68,31 @@ namespace SwyfInstaller
 
     public sealed class AddCard
     {
+    }
+
+    /// <summary>One "settings" entry of a mod's mod.json, shown on its card as a row of options.</summary>
+    public sealed class SettingRow
+    {
+        public ModCard Card { get; set; }
+        public ModSetting Setting { get; set; }
+        public string Label { get; set; }
+        public List<SettingChoice> Choices { get; set; }
+    }
+
+    public sealed class SettingChoice : Observable
+    {
+        private bool _selected;
+
+        public SettingRow Row { get; set; }
+        public ModSettingOption Option { get; set; }
+        public string Name { get; set; }
+        public string Hint { get; set; }
+
+        public bool Selected
+        {
+            get => _selected;
+            set { _selected = value; Raise(nameof(Selected)); }
+        }
     }
 
     public enum TaskState { Pending, Running, Done }
@@ -136,6 +162,9 @@ namespace SwyfInstaller
         public MainWindow()
         {
             InitializeComponent();
+            // Not in --game test mode: testing shouldn't touch the installed hub.
+            if (!Environment.GetCommandLineArgs().Contains("--game"))
+                try { ShellIntegration.UpdateInstalledCopy(); } catch (Exception ex) { Debug.WriteLine(ex); }
             ContentRoot.SizeChanged += (s, e) => ContentRoot.Clip = new RectangleGeometry(new Rect(e.NewSize), 18, 18);
             LoadArtwork();
             ModList.ItemsSource = _cards;
@@ -458,7 +487,7 @@ namespace SwyfInstaller
                 if (!string.IsNullOrEmpty(m.Version)) meta.Add(T($"verze {m.Version}", $"version {m.Version}"));
                 if (!string.IsNullOrEmpty(m.Author)) meta.Add(m.Author);
                 if (mod.SizeOnDisk > 50L * 1024 * 1024) meta.Add(FormatSize(mod.SizeOnDisk));
-                _cards.Add(new ModCard
+                var card = new ModCard
                 {
                     Mod = mod,
                     Id = mod.Id,
@@ -469,7 +498,22 @@ namespace SwyfInstaller
                     Tags = m.LocalTags ?? new List<string>(),
                     Locked = false,
                     Enabled = mod.Enabled
-                });
+                };
+                foreach (var s in (m.Settings ?? new List<ModSetting>()).Where(s => s?.File != null && s.Key != null && s.Options?.Count > 0))
+                {
+                    var current = Hub.ReadSetting(_gameDir, s);
+                    var row = new SettingRow { Card = card, Setting = s, Label = s.LocalName ?? s.Key };
+                    row.Choices = s.Options.Select(o => new SettingChoice
+                    {
+                        Row = row,
+                        Option = o,
+                        Name = o.LocalName ?? o.Value,
+                        Hint = o.LocalHint,
+                        Selected = string.Equals(o.Value, current, StringComparison.OrdinalIgnoreCase)
+                    }).ToList();
+                    card.Settings.Add(row);
+                }
+                _cards.Add(card);
             }
             _cards.Add(new AddCard());
             RefreshStatuses();
@@ -546,6 +590,24 @@ namespace SwyfInstaller
             catch (Exception ex)
             {
                 (sender as CheckBox).IsChecked = card.Enabled;
+                ShowError(ex);
+            }
+        }
+
+        private void OnSettingChoice(object sender, RoutedEventArgs e)
+        {
+            if (!((sender as FrameworkElement)?.Tag is SettingChoice choice) || choice.Selected) return;
+            var row = choice.Row;
+            try
+            {
+                Hub.WriteSetting(_gameDir, row.Card.Mod, row.Setting, choice.Option);
+                foreach (var c in row.Choices) c.Selected = c == choice;
+                var live = Hub.IsGameRunning(_gameDir);
+                ShowToast(T($"{row.Label}: {choice.Name}{(live ? ", projeví se po restartu hry" : "")}",
+                            $"{row.Label}: {choice.Name}{(live ? ", takes effect after restarting the game" : "")}"), Tone.Ok);
+            }
+            catch (Exception ex)
+            {
                 ShowError(ex);
             }
         }

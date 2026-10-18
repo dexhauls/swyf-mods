@@ -19,18 +19,8 @@ namespace SwyfInstaller
 
         internal static void Register()
         {
-            var current = Assembly.GetExecutingAssembly().Location;
             var exe = InstalledExe;
-            try
-            {
-                Directory.CreateDirectory(Path.GetDirectoryName(exe));
-                if (!string.Equals(Path.GetFullPath(current), Path.GetFullPath(exe), StringComparison.OrdinalIgnoreCase))
-                    File.Copy(current, exe, true);
-            }
-            catch (IOException)
-            {
-                // The installed copy is running; keep the old one.
-            }
+            CopySelfTo(exe);
 
             using (var ext = Registry.CurrentUser.CreateSubKey(@"Software\Classes\.swyfmod"))
                 ext.SetValue("", ProgId);
@@ -43,6 +33,64 @@ namespace SwyfInstaller
             SHChangeNotify(0x08000000, 0, IntPtr.Zero, IntPtr.Zero); // SHCNE_ASSOCCHANGED
 
             CreateShortcut(exe);
+        }
+
+        /// <summary>
+        /// Run at every start: a newer hub (say, downloaded again from the release) replaces the installed copy, so the
+        /// Start menu shortcut and double-clicked .swyfmod files open the new one. Only when the hub was installed
+        /// before (the base installation does the first copy) and never with an older version.
+        /// </summary>
+        internal static void UpdateInstalledCopy()
+        {
+            var exe = InstalledExe;
+            try
+            {
+                var leftover = exe + ".old";
+                if (File.Exists(leftover)) File.Delete(leftover);
+            }
+            catch (Exception) { /* the old copy is still running; next time */ }
+            if (!File.Exists(exe)) return;
+            var current = Assembly.GetExecutingAssembly().Location;
+            if (SamePath(current, exe)) return;
+            if (VersionOf(current) <= VersionOf(exe)) return;
+            CopySelfTo(exe);
+        }
+
+        private static void CopySelfTo(string exe)
+        {
+            var current = Assembly.GetExecutingAssembly().Location;
+            if (SamePath(current, exe)) return;
+            Directory.CreateDirectory(Path.GetDirectoryName(exe));
+            try
+            {
+                File.Copy(current, exe, true);
+            }
+            catch (IOException)
+            {
+                // The installed copy is running. Windows lets a running program's file be renamed, so move it aside
+                // (deleted on a later start) and put the new one in its place.
+                try
+                {
+                    var old = exe + ".old";
+                    if (File.Exists(old)) File.Delete(old);
+                    File.Move(exe, old);
+                    File.Copy(current, exe, true);
+                }
+                catch (Exception) { /* keep the old one */ }
+            }
+        }
+
+        private static bool SamePath(string a, string b) =>
+            string.Equals(Path.GetFullPath(a), Path.GetFullPath(b), StringComparison.OrdinalIgnoreCase);
+
+        private static Version VersionOf(string path)
+        {
+            try
+            {
+                var v = System.Diagnostics.FileVersionInfo.GetVersionInfo(path);
+                return new Version(v.FileMajorPart, v.FileMinorPart, v.FileBuildPart, v.FilePrivatePart);
+            }
+            catch (Exception) { return new Version(0, 0); }
         }
 
         private static void CreateShortcut(string exe)

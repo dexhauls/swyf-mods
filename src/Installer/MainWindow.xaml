@@ -101,7 +101,48 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
+                    <!-- Mod settings from mod.json "settings": one segmented choice per setting -->
+                    <ItemsControl Grid.Row="2" ItemsSource="{Binding Settings}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="0,12,0,0">
+                                    <TextBlock Text="{Binding Label}" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextMuted}" Margin="0,0,0,6" />
+                                    <Border CornerRadius="10" Background="{StaticResource SurfacePressed}" Padding="3" HorizontalAlignment="Left">
+                                        <ItemsControl ItemsSource="{Binding Choices}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Click="OnSettingChoice" Tag="{Binding}" ToolTip="{Binding Hint}" Cursor="Hand" Focusable="False">
+                                                        <Button.Template>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border x:Name="Seg" CornerRadius="8" Padding="12,5" Background="Transparent">
+                                                                    <TextBlock x:Name="SegText" Text="{Binding Name}" FontSize="12" Foreground="{StaticResource Text}" />
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter TargetName="Seg" Property="Background" Value="{StaticResource SurfaceHover}" />
+                                                                    </Trigger>
+                                                                    <DataTrigger Binding="{Binding Selected}" Value="True">
+                                                                        <Setter TargetName="Seg" Property="Background" Value="{StaticResource Accent}" />
+                                                                        <Setter TargetName="SegText" Property="Foreground" Value="{StaticResource AccentDark}" />
+                                                                        <Setter TargetName="SegText" Property="FontWeight" Value="SemiBold" />
+                                                                    </DataTrigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Button.Template>
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </Border>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
@@ -126,7 +167,7 @@
                     </Grid>
                     <TextBlock Grid.Row="1" Text="{Binding Description}" FontSize="12.5" Foreground="{StaticResource TextMuted}"
                                TextWrapping="Wrap" Margin="0,12,0,0" LineHeight="18" />
-                    <Grid Grid.Row="2" Margin="0,14,0,0">
+                    <Grid Grid.Row="3" Margin="0,14,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />

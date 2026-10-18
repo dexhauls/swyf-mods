@@ -29,6 +29,7 @@ namespace SwyfInstaller
         [DataMember(Name = "tags")] public List<string> Tags { get; set; }
         [DataMember(Name = "dll")] public string Dll { get; set; }
         [DataMember(Name = "downloads")] public List<ModDownload> Downloads { get; set; }
+        [DataMember(Name = "settings")] public List<ModSetting> Settings { get; set; }
 
         // Optional English texts; the hub shows them when the game is not in Czech/Slovak.
         [DataMember(Name = "name_en")] public string NameEn { get; set; }
@@ -56,6 +57,35 @@ namespace SwyfInstaller
 
         public string LocalName => Lang.Pick(Name, NameEn);
         public string LocalDescription => Lang.Pick(Description, DescriptionEn);
+    }
+
+    /// <summary>A choice shown on the mod's card, stored as one key of a BepInEx config file.</summary>
+    [DataContract]
+    public class ModSetting
+    {
+        [DataMember(Name = "name")] public string Name { get; set; }
+        [DataMember(Name = "name_en")] public string NameEn { get; set; }
+        [DataMember(Name = "file")] public string File { get; set; }        // relative to the game folder
+        [DataMember(Name = "section")] public string Section { get; set; }
+        [DataMember(Name = "key")] public string Key { get; set; }
+        [DataMember(Name = "default")] public string Default { get; set; }
+        [DataMember(Name = "options")] public List<ModSettingOption> Options { get; set; }
+
+        public string LocalName => Lang.Pick(Name, NameEn);
+    }
+
+    [DataContract]
+    public class ModSettingOption
+    {
+        [DataMember(Name = "value")] public string Value { get; set; }
+        [DataMember(Name = "name")] public string Name { get; set; }
+        [DataMember(Name = "name_en")] public string NameEn { get; set; }
+        [DataMember(Name = "hint")] public string Hint { get; set; }
+        [DataMember(Name = "hint_en")] public string HintEn { get; set; }
+        [DataMember(Name = "clears")] public List<string> Clears { get; set; }  // files in Mods/<id> deleted when picked
+
+        public string LocalName => Lang.Pick(Name, NameEn);
+        public string LocalHint => Lang.Pick(Hint, HintEn);
     }
 
     [DataContract]
@@ -113,6 +143,7 @@ namespace SwyfInstaller
         private const string StateFile = @"BepInEx\swyf-hub.json";
         private const string StatusFile = @"BepInEx\swyf-modmanager-status.json";
         private const string ManagerDll = @"BepInEx\plugins\SwyfModManager\SwyfModManager.dll";
+        private const string BepInExConfig = @"BepInEx\config\BepInEx.cfg";
         private static readonly string[] LoaderFiles = { "winhttp.dll", "doorstop_config.ini", ".doorstop_version", "changelog.txt" };
         private static readonly Regex IdPattern = new Regex("^[A-Za-z0-9_-]+$");
 
@@ -173,7 +204,37 @@ namespace SwyfInstaller
                 }
             }
             Directory.CreateDirectory(Path.Combine(gameDir, "Mods"));
+            DisableBepInExConsole(gameDir);
             WriteJson(Path.Combine(gameDir, StateFile), new HubState { BaseVersion = Version });
+        }
+
+        /// <summary>
+        /// Sets [Logging.Console] Enabled = false in BepInEx.cfg, leaving every other setting as it is. The console
+        /// window shares its input queue with the game's main thread, so each mouse move waits on conhost and
+        /// turning the camera costs 3–5 ms per frame (measured with the Výkon mod). The log still goes to
+        /// BepInEx\LogOutput.log.
+        /// </summary>
+        private static void DisableBepInExConsole(string gameDir)
+        {
+            var path = Path.Combine(gameDir, BepInExConfig);
+            var lines = File.Exists(path) ? File.ReadAllLines(path).ToList() : new List<string>();
+            var section = lines.FindIndex(l => l.Trim().Equals("[Logging.Console]", StringComparison.OrdinalIgnoreCase));
+            if (section < 0)
+            {
+                if (lines.Count > 0 && lines[lines.Count - 1].Trim().Length > 0) lines.Add("");
+                lines.AddRange(new[] { "[Logging.Console]", "", "## Enables showing a console for log output.",
+                    "# Setting type: Boolean", "# Default value: false", "Enabled = false", "" });
+            }
+            else
+            {
+                var end = lines.FindIndex(section + 1, l => l.TrimStart().StartsWith("["));
+                if (end < 0) end = lines.Count;
+                var key = lines.FindIndex(section + 1, end - section - 1, l => Regex.IsMatch(l, @"^\s*Enabled\s*="));
+                if (key >= 0) lines[key] = "Enabled = false";
+                else lines.Insert(section + 1, "Enabled = false");
+            }
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
+            File.WriteAllText(path, string.Join("\r\n", lines) + "\r\n", new UTF8Encoding(false));
         }
 
         public static void UninstallAll(string gameDir)
@@ -306,6 +367,78 @@ namespace SwyfInstaller
             var marker = Path.Combine(mod.Folder, "disabled");
             if (enabled) DeleteFile(marker);
             else File.WriteAllText(marker, Lang.T("Mod je vypnutý v SWYF Mod Hubu.", "This mod is turned off in SWYF Mod Hub."));
+        }
+
+        // ---------- Mod settings (mod.json "settings" → a key in a BepInEx .cfg) ----------
+
+        /// <summary>The setting's current value from its config file, or its default when the file or key is missing.</summary>
+        public static string ReadSetting(string gameDir, ModSetting s)
+        {
+            try
+            {
+                var path = Path.Combine(gameDir, s.File.Replace('/', '\\'));
+                if (File.Exists(path))
+                {
+                    string section = null;
+                    foreach (var raw in File.ReadAllLines(path))
+                    {
+                        var line = raw.Trim();
+                        if (line.StartsWith("[") && line.EndsWith("]")) section = line.Substring(1, line.Length - 2).Trim();
+                        else if (section == s.Section && !line.StartsWith("#") && line.Contains("="))
+                        {
+                            var eq = line.IndexOf('=');
+                            if (line.Substring(0, eq).Trim() == s.Key) return line.Substring(eq + 1).Trim();
+                        }
+                    }
+                }
+            }
+            catch (IOException) { }
+            return s.Default ?? "";
+        }
+
+        /// <summary>
+        /// Writes the setting into its BepInEx config (creating the file, section or key if needed; everything else in the
+        /// file stays) and deletes the files the option clears. Mods read their config at game start.
+        /// </summary>
+        public static void WriteSetting(string gameDir, InstalledMod mod, ModSetting s, ModSettingOption option)
+        {
+            var path = Path.Combine(gameDir, s.File.Replace('/', '\\'));
+            var lines = File.Exists(path) ? File.ReadAllLines(path).ToList() : new List<string>();
+            string section = null;
+            int sectionEnd = -1, keyLine = -1;
+            for (int i = 0; i < lines.Count; i++)
+            {
+                var line = lines[i].Trim();
+                if (line.StartsWith("[") && line.EndsWith("]"))
+                {
+                    section = line.Substring(1, line.Length - 2).Trim();
+                    if (section == s.Section) sectionEnd = i + 1;
+                    continue;
+                }
+                if (section != s.Section) continue;
+                sectionEnd = i + 1;
+                var eq = line.IndexOf('=');
+                if (!line.StartsWith("#") && eq > 0 && line.Substring(0, eq).Trim() == s.Key) keyLine = i;
+            }
+            var entry = $"{s.Key} = {option.Value}";
+            if (keyLine >= 0) lines[keyLine] = entry;
+            else if (sectionEnd >= 0) lines.Insert(sectionEnd, entry);
+            else
+            {
+                if (lines.Count > 0 && lines[lines.Count - 1].Trim().Length > 0) lines.Add("");
+                lines.Add($"[{s.Section}]");
+                lines.Add("");
+                lines.Add(entry);
+            }
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
+            File.WriteAllLines(path, lines, new UTF8Encoding(false));
+
+            var folder = mod.Folder ?? Path.Combine(gameDir, "Mods", mod.Id);
+            foreach (var name in option.Clears ?? new List<string>())
+            {
+                if (name.Contains("..")) continue;
+                DeleteFile(Path.Combine(folder, name.Replace('/', '\\')));
+            }
         }
 
         public static void Remove(InstalledMod mod)
