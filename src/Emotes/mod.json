@@ -1,0 +1,13 @@
+{
+  "id": "Emotes",
+  "name": "Emoty",
+  "name_en": "Emotes",
+  "version": "1.1.0",
+  "author": "Dex",
+  "description": "Na B místo drbání v zadku otevře kolo emotů: všechny tanečky a gesta ze hry a k tomu nové emoty (mávání, salutování, svaly, modlitba, strach...). Podrž B, myší vyber, pusť. Kolečko myši přepíná stránky. Emoty ze hry vidí všichni, nové jen hráči s modem, když ho má i host.",
+  "description_en": "Pressing B opens an emote wheel instead of the butt scratch: every dance and gesture from the game plus new emotes (wave, salute, flex, pray, fear...). Hold B, pick with the mouse, release. The mouse wheel switches pages. Everyone sees the game's own emotes; the new ones are only seen by players who have the mod, and only when the host has it too.",
+  "icon": "E76E",
+  "tags": [ "Postava", "Tanečky" ],
+  "tags_en": [ "Character", "Dances" ],
+  "dll": "Emotes.dll"
+}

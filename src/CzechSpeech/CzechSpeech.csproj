@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <AssemblyName>CzechSpeech</AssemblyName>
+    <RootNamespace>CzechSpeech</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <DebugType>portable</DebugType>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+
+    <GameDir Condition="'$(GameDir)' == ''">$(MSBuildProjectDirectory)\..\..</GameDir>
+    <ManagedDir>$(GameDir)\Scam With Your Friends_Data\Managed</ManagedDir>
+    <BepInExDir>$(GameDir)\BepInEx</BepInExDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="BepInEx" HintPath="$(BepInExDir)\core\BepInEx.dll" Private="false" />
+    <Reference Include="0Harmony" HintPath="$(BepInExDir)\core\0Harmony.dll" Private="false" />
+    <Reference Include="UnityEngine" HintPath="$(ManagedDir)\UnityEngine.dll" Private="false" />
+    <Reference Include="UnityEngine.CoreModule" HintPath="$(ManagedDir)\UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="ScriptsAssDef" HintPath="$(ManagedDir)\ScriptsAssDef.dll" Private="false" />
+    <Reference Include="Kolkata.Speech" HintPath="$(ManagedDir)\Kolkata.Speech.dll" Private="false" />
+    <Reference Include="com.whisper.unity" HintPath="$(ManagedDir)\com.whisper.unity.dll" Private="false" />
+  </ItemGroup>
+
+  <Target Name="CopyToPlugins" AfterTargets="Build">
+    <MakeDir Directories="$(GameDir)\Mods;$(GameDir)\Mods\CzechSpeech" />
+    <Copy SourceFiles="$(TargetPath);$(TargetDir)$(TargetName).pdb;mod.json" DestinationFolder="$(GameDir)\Mods\$(AssemblyName)" Condition="Exists('mod.json')" />
+    <Copy SourceFiles="$(TargetPath);$(TargetDir)$(TargetName).pdb" DestinationFolder="$(GameDir)\Mods" Condition="!Exists('mod.json')" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\MODEL-SEM.txt" DestinationFolder="$(GameDir)\Mods\CzechSpeech" />
+  </Target>
+
+</Project>

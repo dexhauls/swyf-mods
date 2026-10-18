@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <AssemblyName>Arcade</AssemblyName>
+    <RootNamespace>Arcade</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <DebugType>portable</DebugType>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+
+    <GameDir Condition="'$(GameDir)' == ''">$(MSBuildProjectDirectory)\..\..</GameDir>
+    <ManagedDir>$(GameDir)\Scam With Your Friends_Data\Managed</ManagedDir>
+    <BepInExDir>$(GameDir)\BepInEx</BepInExDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="BepInEx" HintPath="$(BepInExDir)\core\BepInEx.dll" Private="false" />
+    <Reference Include="0Harmony" HintPath="$(BepInExDir)\core\0Harmony.dll" Private="false" />
+    <Reference Include="UnityEngine" HintPath="$(ManagedDir)\UnityEngine.dll" Private="false" />
+    <Reference Include="UnityEngine.CoreModule" HintPath="$(ManagedDir)\UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="UnityEngine.UIElementsModule" HintPath="$(ManagedDir)\UnityEngine.UIElementsModule.dll" Private="false" />
+    <Reference Include="UnityEngine.TextRenderingModule" HintPath="$(ManagedDir)\UnityEngine.TextRenderingModule.dll" Private="false" />
+    <Reference Include="UnityEngine.ImageConversionModule" HintPath="$(ManagedDir)\UnityEngine.ImageConversionModule.dll" Private="false" />
+    <Reference Include="Unity.InputSystem" HintPath="$(ManagedDir)\Unity.InputSystem.dll" Private="false" />
+    <Reference Include="Assembly-CSharp" HintPath="$(ManagedDir)\Assembly-CSharp.dll" Private="false" />
+    <Reference Include="ScriptsAssDef" HintPath="$(ManagedDir)\ScriptsAssDef.dll" Private="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Desktop icon; written to Mods/Arcade/arcade-icon.png at startup (the OS loads app icons from files). -->
+    <EmbeddedResource Include="arcade-icon.png" LogicalName="Arcade.arcade-icon.png" />
+    <None Remove="tools\**" />
+    <Compile Remove="tools\**" />
+    <EmbeddedResource Remove="tools\**" />
+  </ItemGroup>
+
+  <Target Name="CopyToPlugins" AfterTargets="Build">
+    <MakeDir Directories="$(GameDir)\Mods;$(GameDir)\Mods\$(AssemblyName)" />
+    <Copy SourceFiles="$(TargetPath);$(TargetDir)$(TargetName).pdb;mod.json" DestinationFolder="$(GameDir)\Mods\$(AssemblyName)" Condition="Exists('mod.json')" />
+  </Target>
+
+</Project>

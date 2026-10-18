@@ -1,0 +1,15 @@
+Sem patri model Whisper pro mod Czech Speech (CzechSpeech.dll).
+
+Nejlepsi (vychozi): ggml-large-v3.bin (3,1 GB, ~4 GB VRAM)
+  https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-v3.bin
+
+Rychlejsi, pro slabsi PC: ggml-large-v3-turbo.bin (1,6 GB, ~2 GB VRAM)
+  https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-v3-turbo.bin
+
+Staci soubor stahnout a dat ho do teto slozky (Mods\CzechSpeech).
+Ktery model se pouzije, urcuje BepInEx\config\dex.swyf.czechspeech.cfg:
+  Model = large-v3   nebo   Model = turbo
+Kdyz zvoleny model chybi, mod vezme nejlepsi, ktery tu najde.
+
+Bez modelu mod pouzije herni model (ggml-base), ale porad vynuti cestinu,
+beam search a filtr nesmyslu.

@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    SWYF Mod Hub: installs the base (mod loader, stripped-game fix, SWYF Mod Manager) once, then installs,
+    toggles and removes .swyfmod packages; the in-game Mod Manager applies those changes live.
+    .NET Framework 4.8 ships with Windows 10/11, so nothing else needs installing.
+    The base is embedded as payload.zip, built by build-payload.ps1.
+  -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>SWYF-Hub</AssemblyName>
+    <RootNamespace>SwyfInstaller</RootNamespace>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <Version>1.1.0</Version>
+    <Product>SWYF Mod Hub</Product>
+    <Title>SWYF Mod Hub – mody pro Scam With Your Friends</Title>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+
+    <GameDir Condition="'$(GameDir)' == ''">$(MSBuildProjectDirectory)\..\..</GameDir>
+    <PayloadPath>$(BaseIntermediateOutputPath)payload.zip</PayloadPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Runtime.Serialization" />
+    <EmbeddedResource Include="$(PayloadPath)" LogicalName="payload.zip" />
+    <None Remove="build-payload.ps1;tools\**" />
+  </ItemGroup>
+
+  <!-- The payload needs fresh builds of the patcher and the Mod Manager (built without touching the game folder). -->
+  <Target Name="BuildPayload" BeforeTargets="PrepareForBuild">
+    <Exec Command="dotnet build &quot;$(MSBuildProjectDirectory)\..\StrippedFix\StrippedFix.csproj&quot; -c Release -p:SkipDeploy=true --nologo -v q" />
+    <Exec Command="dotnet build &quot;$(MSBuildProjectDirectory)\..\ModManager\SwyfModManager.csproj&quot; -c Release -p:SkipDeploy=true --nologo -v q" />
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildProjectDirectory)\build-payload.ps1&quot; -GameDir &quot;$(GameDir)&quot; -Out &quot;$(PayloadPath)&quot;" />
+  </Target>
+
+  <Target Name="CopyToDist" AfterTargets="Build">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(MSBuildProjectDirectory)\..\dist" />
+  </Target>
+
+</Project>

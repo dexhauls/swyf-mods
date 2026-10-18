@@ -1,0 +1,24 @@
+# build output
+bin/
+obj/
+.vs/
+*.user
+# Unity bake project: generated files and the source animations (not ours to share)
+src/Emotes/tools/UnityBake/Library/
+src/Emotes/tools/UnityBake/Temp/
+src/Emotes/tools/UnityBake/Logs/
+src/Emotes/tools/UnityBake/UserSettings/
+src/Emotes/tools/UnityBake/Assets/Clips/
+src/Emotes/tools/UnityBake/Assets/Rig/
+src/Emotes/tools/UnityBake/*.csproj
+src/Emotes/tools/UnityBake/*.slnx
+src/Emotes/tools/UnityBake/*.log
+src/Emotes/tools/UnityBake/.vscode/
+# private content: third-party dances and music, private mods
+**/private/
+**/mixamo/
+**/music/
+**/dances-*.bin
+src/CustomSkins/
+src/Presentation/
+__pycache__/

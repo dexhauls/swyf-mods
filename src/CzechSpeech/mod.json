@@ -1,0 +1,39 @@
+{
+  "id": "CzechSpeech",
+  "name": "Lepší čeština",
+  "name_en": "Better Czech Speech",
+  "version": "1.0.1",
+  "author": "Dex",
+  "description": "Výrazně lepší rozpoznávání řeči v češtině přes velký Whisper model, i když šeptáš, křičíš nebo mluvíš nezřetelně. Mění jen tvůj mikrofon, funguje v každé lobby. Změna modelu se projeví po restartu hry.",
+  "description_en": "Much better Czech speech recognition with a large Whisper model, even when you whisper, shout or mumble. Only affects your own microphone, so it works in any lobby. Changing the model takes effect after restarting the game.",
+  "icon": "E720",
+  "tags": [ "Mikrofon", "Whisper" ],
+  "tags_en": [ "Microphone", "Whisper" ],
+  "dll": "CzechSpeech.dll",
+  "downloads": [
+    {
+      "id": "large-v3",
+      "name": "Model large-v3",
+      "name_en": "large-v3 model",
+      "description": "Nejlepší čeština. Na grafiku potřebuje asi 4 GB paměti.",
+      "description_en": "Best Czech accuracy. Needs about 4 GB of graphics memory.",
+      "url": "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-v3.bin",
+      "sha256": "64d182b440b98d5203c4f9bd541544d84c605196c4f7b845dfa11fb23594d1e2",
+      "size": 3095033483,
+      "path": "ggml-large-v3.bin",
+      "default": true
+    },
+    {
+      "id": "turbo",
+      "name": "Model turbo",
+      "name_en": "turbo model",
+      "description": "Asi 3× rychlejší, o kousek horší. Pro slabší PC (asi 2 GB paměti grafiky).",
+      "description_en": "About 3× faster, slightly less accurate. For weaker PCs (about 2 GB of graphics memory).",
+      "url": "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-v3-turbo.bin",
+      "sha256": "1fc70f774d38eb169993ac391eea357ef47c88757ef72ee5943879b7e8e2bc69",
+      "size": 1624555275,
+      "path": "ggml-large-v3-turbo.bin",
+      "default": false
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <AssemblyName>StarterMod</AssemblyName>
+    <RootNamespace>StarterMod</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <DebugType>portable</DebugType>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+
+    <!-- Game root (two levels up from this file). Override with -p:GameDir=... if you move the project. -->
+    <GameDir Condition="'$(GameDir)' == ''">$(MSBuildProjectDirectory)\..\..</GameDir>
+    <ManagedDir>$(GameDir)\Scam With Your Friends_Data\Managed</ManagedDir>
+    <BepInExDir>$(GameDir)\BepInEx</BepInExDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Lets the .NET SDK build for .NET Framework 4.7.2 without Visual Studio. -->
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="BepInEx" HintPath="$(BepInExDir)\core\BepInEx.dll" Private="false" />
+    <Reference Include="0Harmony" HintPath="$(BepInExDir)\core\0Harmony.dll" Private="false" />
+    <Reference Include="UnityEngine" HintPath="$(ManagedDir)\UnityEngine.dll" Private="false" />
+    <Reference Include="UnityEngine.CoreModule" HintPath="$(ManagedDir)\UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="UnityEngine.InputLegacyModule" HintPath="$(ManagedDir)\UnityEngine.InputLegacyModule.dll" Private="false" />
+    <Reference Include="Assembly-CSharp" HintPath="$(ManagedDir)\Assembly-CSharp.dll" Private="false" />
+    <Reference Include="ScriptsAssDef" HintPath="$(ManagedDir)\ScriptsAssDef.dll" Private="false" />
+    <Reference Include="Mirror" HintPath="$(ManagedDir)\Mirror.dll" Private="false" />
+  </ItemGroup>
+
+  <!-- After each build, copy the mod into the game's Mods folder. -->
+  <Target Name="CopyToPlugins" AfterTargets="Build">
+    <MakeDir Directories="$(GameDir)\Mods;$(GameDir)\Mods\$(AssemblyName)" />
+    <Copy SourceFiles="$(TargetPath);$(TargetDir)$(TargetName).pdb;mod.json" DestinationFolder="$(GameDir)\Mods\$(AssemblyName)" Condition="Exists('mod.json')" />
+    <Copy SourceFiles="$(TargetPath);$(TargetDir)$(TargetName).pdb" DestinationFolder="$(GameDir)\Mods" Condition="!Exists('mod.json')" />
+  </Target>
+
+</Project>

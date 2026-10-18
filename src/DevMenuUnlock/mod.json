@@ -1,0 +1,13 @@
+{
+  "id": "DevMenuUnlock",
+  "name": "Vývojářské menu",
+  "name_en": "Developer Menu",
+  "version": "1.1.0",
+  "author": "Dex",
+  "description": "Odemkne skryté dev menu hry v moderním vzhledu: rychlost, létající kamera, teleport, spawn předmětů, peníze a další.",
+  "description_en": "Unlocks the game's hidden dev menu with a modern look: speed, free-fly camera, teleport, item spawning, money and more.",
+  "icon": "E90F",
+  "tags": [ "F8", "Jen pro hosta" ],
+  "tags_en": [ "F8", "Host only" ],
+  "dll": "DevMenuUnlock.dll"
+}

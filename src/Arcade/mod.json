@@ -1,0 +1,13 @@
+{
+  "id": "Arcade",
+  "name": "Arkáda",
+  "name_en": "Arcade",
+  "version": "1.0.0",
+  "author": "Dex",
+  "description": "Přidá na herní počítač aplikaci Arkáda s retro hrami: Pac-Man, Had, Tetris, Cihličky a Pong. Hraje se šipkami nebo WASD, nejlepší skóre se ukládá.",
+  "description_en": "Adds an Arcade app with retro games to the in-game computer: Pac-Man, Snake, Tetris, Breakout and Pong. Play with the arrow keys or WASD; high scores are saved.",
+  "icon": "E7FC",
+  "tags": [ "Počítač ve hře", "Hry" ],
+  "tags_en": [ "In-game computer", "Games" ],
+  "dll": "Arcade.dll"
+}
