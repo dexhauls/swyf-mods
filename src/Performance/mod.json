@@ -1,0 +1,21 @@
+{
+  "id": "Performance",
+  "name": "Výkon",
+  "name_en": "Performance",
+  "version": "1.0.0",
+  "author": "Dex",
+  "description": "Hra je pomalá hlavně kvůli tisícům kreslicích příkazů za snímek, ne kvůli grafice. Mod ubírá zbytečnou práci a vzhled nechává stejný: stíny drobností (hrnky, klávesnice) se počítají jen zblízka, tři venkovní pouliční lampy uvnitř kanceláře nekreslí stíny (s dosahem 52 m překreslovaly celé patro 6×), hlavní světlo má 2 ostřejší stínové kaskády místo 4, webkamera šéfa na tabuli se kreslí 30× za sekundu místo každý snímek, tiché zdroje zvuku (přes 1400) se vypnou, dokud nehrají, v hlavním menu je limit 60 FPS a zavře se konzole BepInExu, kvůli které hra při otáčení myší čekala na Windows, a hra nepřenastavuje skrytý kurzor při každém pohybu myši (log se dál zapisuje do BepInEx/LogOutput.log). F10 ukáže FPS, čas snímku a kolik stojí zprávy Windows a myš. F11 otevře menu s předvolbami Vypnuto / Vyvážené / Maximální výkon / Vlastní a s každou úpravou zvlášť, včetně limitů FPS (Maximální navíc zkrátí stíny, místo TAA použije SMAA a drobné předměty nasvítí ze světelných sond scény, takže mají o odstín jiné osvětlení).",
+  "description_en": "The game is slow mostly because of thousands of draw calls per frame, not the graphics. The mod removes needless work and keeps the look: shadows of small props (mugs, keyboards) are drawn only up close, the three street lights outside cast no shadows while you are inside (with a 52 m range they redrew the whole floor 6×), the main light has 2 sharper shadow cascades instead of 4, the boss webcam on the board renders 30 times a second instead of every frame, silent audio sources (1400+) are switched off until they play, the main menu is capped at 60 FPS, and the BepInEx console is closed, because the game waited on it whenever the mouse moved, and the hidden cursor is no longer re-set on every mouse move (the log still goes to BepInEx/LogOutput.log). F10 shows FPS, frame time and the cost of Windows messages and the mouse. F11 opens a menu with the presets Off / Balanced / Max performance / Custom and every tweak on its own, FPS limits included (Max performance also shortens shadows, uses SMAA instead of TAA and lights small props from the scene's light probes, a slightly different shade).",
+  "icon": "EC4A",
+  "tags": [
+    "FPS",
+    "Grafika",
+    "Klientský"
+  ],
+  "tags_en": [
+    "FPS",
+    "Graphics",
+    "Client side"
+  ],
+  "dll": "Performance.dll"
+}

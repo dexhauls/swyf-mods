@@ -64,6 +64,39 @@ namespace SwyfInstaller
             get => _statusText;
             set { _statusText = value; Raise(nameof(StatusText)); }
         }
+
+        // A newer version in the GitHub releases (null when there is none).
+        private UpdateOffer _update;
+        private bool _updating;
+        private string _updateText;
+
+        public UpdateOffer Update
+        {
+            get => _update;
+            set { _update = value; Raise(nameof(Update), nameof(HasUpdate)); }
+        }
+
+        public bool HasUpdate => _update != null;
+
+        public bool Updating
+        {
+            get => _updating;
+            set { _updating = value; Raise(nameof(Updating)); }
+        }
+
+        public string UpdateText
+        {
+            get => _updateText;
+            set { _updateText = value; Raise(nameof(UpdateText)); }
+        }
+
+        private string _updateButtonText;
+
+        public string UpdateButtonText
+        {
+            get => _updateButtonText;
+            set { _updateButtonText = value; Raise(nameof(UpdateButtonText)); }
+        }
     }
 
     public sealed class AddCard
@@ -158,13 +191,20 @@ namespace SwyfInstaller
         private bool _baseLegacy, _baseUpdate;
         private List<InstalledMod> _baseMods = new List<InstalledMod>();
         private InstalledMod _packageExisting;
+        private List<GhRelease> _releases;      // from GitHub at start, null until (or unless) they arrive
+        private UpdateOffer _hubUpdate;
+        private bool _hubUpdating;
 
         public MainWindow()
         {
             InitializeComponent();
             // Not in --game test mode: testing shouldn't touch the installed hub.
-            if (!Environment.GetCommandLineArgs().Contains("--game"))
+            var testMode = Environment.GetCommandLineArgs().Contains("--game");
+            if (!testMode)
+            {
                 try { ShellIntegration.UpdateInstalledCopy(); } catch (Exception ex) { Debug.WriteLine(ex); }
+                Updater.CleanUpAfterUpdate();
+            }
             ContentRoot.SizeChanged += (s, e) => ContentRoot.Clip = new RectangleGeometry(new Rect(e.NewSize), 18, 18);
             LoadArtwork();
             ModList.ItemsSource = _cards;
@@ -182,6 +222,106 @@ namespace SwyfInstaller
             _pendingPackage = args.FirstOrDefault(a => (a.EndsWith(".swyfmod", StringComparison.OrdinalIgnoreCase) || a.EndsWith(".zip", StringComparison.OrdinalIgnoreCase) ||
                                                         a.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)) && File.Exists(a));
             Loaded += async (s, e) => await FindGameAsync(args);
+            // "--check-updates" turns the check on in --game test mode too (to try updates on a test folder).
+            if (!testMode || Environment.GetCommandLineArgs().Contains("--check-updates"))
+            {
+                Loaded += async (s, e) => await CheckForUpdatesAsync();
+                // Right after a self-update the previous hub may still be closing and holding its .old file.
+                Loaded += async (s, e) =>
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(5));
+                    Updater.CleanUpAfterUpdate();
+                };
+            }
+        }
+
+        // ================= Updates from GitHub releases =================
+
+        /// <summary>
+        /// Asks GitHub for the releases once, in the background. Without internet or over the API limit nothing shows.
+        /// Only offers: the hub and mods are downloaded and installed after a click.
+        /// </summary>
+        private async Task CheckForUpdatesAsync()
+        {
+            var releases = await Updater.FetchReleasesAsync();
+            if (releases == null) return;
+            _releases = releases;
+            ApplyUpdates();
+        }
+
+        /// <summary>Shows the hub bar and the mod cards' update rows for what the releases have that's newer.</summary>
+        private void ApplyUpdates()
+        {
+            if (_releases == null) return;
+            var installed = _cards.OfType<ModCard>().Where(c => !c.Locked && c.Mod?.Folder != null && c.Mod.Manifest?.Version != null)
+                .GroupBy(c => c.Id, StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(g => g.Key, g => g.First().Mod.Manifest.Version, StringComparer.OrdinalIgnoreCase);
+            var found = Updater.FindUpdates(_releases, new Version(Hub.Version), installed);
+            if (!_hubUpdating) _hubUpdate = found.Hub;
+            RenderHubUpdate();
+            foreach (var card in _cards.OfType<ModCard>().Where(c => !c.Locked))
+            {
+                if (card.Updating) continue;
+                card.Update = found.Mods.TryGetValue(card.Id, out var offer) ? offer : null;
+                if (card.Update == null) continue;
+                card.UpdateText = T("Je nová verze", "New version out");
+                card.UpdateButtonText = T($"Aktualizovat na {card.Update.VersionText}", $"Update to {card.Update.VersionText}");
+            }
+        }
+
+        private void RenderHubUpdate()
+        {
+            HubUpdateBar.Visibility = _hubUpdate != null ? Visibility.Visible : Visibility.Collapsed;
+            if (_hubUpdate == null || _hubUpdating) return;
+            HubUpdateText.Text = T($"Je nová verze hubu {_hubUpdate.VersionText}", $"Hub {_hubUpdate.VersionText} is out");
+            HubUpdateButton.Visibility = Visibility.Visible;
+        }
+
+        private async void OnUpdateHub(object sender, RoutedEventArgs e)
+        {
+            var offer = _hubUpdate;
+            if (offer == null || _hubUpdating || _busy) return;
+            _hubUpdating = true;
+            _busy = true;
+            HubUpdateButton.Visibility = Visibility.Collapsed;
+            HubUpdateText.Text = T($"Stahuju hub {offer.VersionText}…", $"Downloading hub {offer.VersionText}…");
+            var progress = new Progress<double>(v =>
+                HubUpdateText.Text = T($"Stahuju hub {offer.VersionText}… {Math.Round(v * 100)} %", $"Downloading hub {offer.VersionText}… {Math.Round(v * 100)}%"));
+            try
+            {
+                await Updater.DownloadAndStartHubAsync(offer, progress);
+                Close(); // the new hub is starting in our place
+            }
+            catch (Exception ex)
+            {
+                _hubUpdating = false;
+                _busy = false;
+                RenderHubUpdate();
+                ShowError(ex);
+            }
+        }
+
+        private async void OnUpdateMod(object sender, RoutedEventArgs e)
+        {
+            if (!((sender as Button)?.Tag is ModCard card) || card.Update == null || card.Updating || _busy) return;
+            var offer = card.Update;
+            card.Updating = true;
+            card.UpdateText = T($"Stahuju verzi {offer.VersionText}…", $"Downloading version {offer.VersionText}…");
+            var progress = new Progress<double>(v =>
+                card.UpdateText = T($"Stahuju verzi {offer.VersionText}… {Math.Round(v * 100)} %", $"Downloading version {offer.VersionText}… {Math.Round(v * 100)}%"));
+            try
+            {
+                var path = await Updater.DownloadModAsync(offer, progress);
+                card.Updating = false;
+                card.UpdateText = T("Je nová verze", "New version out");
+                OpenPackage(path); // the same dialog as a double-clicked .swyfmod
+            }
+            catch (Exception ex)
+            {
+                card.Updating = false;
+                card.UpdateText = T("Je nová verze", "New version out");
+                ShowError(ex);
+            }
         }
 
         // ================= Language =================
@@ -217,6 +357,7 @@ namespace SwyfInstaller
             VersionText.Text = T($"verze {Hub.Version}  ·  Scam With Your Friends", $"version {Hub.Version}  ·  Scam With Your Friends");
             var names = StepNames;
             for (var i = 0; i < _steps.Count && i < names.Length; i++) _steps[i].Label.Text = names[i];
+            RenderHubUpdate();
         }
 
         /// <summary>The game's language changed: redo every text currently on screen.</summary>
@@ -516,6 +657,7 @@ namespace SwyfInstaller
                 _cards.Add(card);
             }
             _cards.Add(new AddCard());
+            ApplyUpdates();
             RefreshStatuses();
         }
 

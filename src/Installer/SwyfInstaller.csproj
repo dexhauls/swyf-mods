@@ -14,7 +14,7 @@
     <AssemblyName>SWYF-Hub</AssemblyName>
     <RootNamespace>SwyfInstaller</RootNamespace>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <Version>1.1.3</Version>
+    <Version>1.1.4</Version>
     <Product>SWYF Mod Hub</Product>
     <Title>SWYF Mod Hub – mody pro Scam With Your Friends</Title>
     <ApplicationManifest>app.manifest</ApplicationManifest>

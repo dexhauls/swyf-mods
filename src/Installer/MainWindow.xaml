@@ -102,7 +102,23 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
+                    <!-- A newer version of this mod in the GitHub releases -->
+                    <Border x:Name="UpdateRow" Grid.Row="4" CornerRadius="10" Background="#1AFFC23D" BorderBrush="#40FFC23D" BorderThickness="1"
+                            Padding="10,4,4,4" Margin="0,12,0,0" Visibility="Collapsed">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Style="{StaticResource Icon}" Text="&#xE896;" FontSize="12" Foreground="{StaticResource Accent}" Margin="0,0,8,0" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="1" Text="{Binding UpdateText}" FontSize="12" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                            <Button x:Name="UpdateButton" Grid.Column="2" Style="{StaticResource LinkButton}" Content="{Binding UpdateButtonText}" FontSize="12"
+                                    Margin="8,0,0,0" Click="OnUpdateMod" Tag="{Binding}" />
+                        </Grid>
+                    </Border>
                     <!-- Mod settings from mod.json "settings": one segmented choice per setting -->
                     <ItemsControl Grid.Row="2" ItemsSource="{Binding Settings}">
                         <ItemsControl.ItemTemplate>
@@ -213,6 +229,12 @@
                     <Setter TargetName="StatusDot" Property="Fill" Value="{StaticResource Danger}" />
                     <Setter TargetName="StatusLine" Property="Foreground" Value="{StaticResource Danger}" />
                 </DataTrigger>
+                <DataTrigger Binding="{Binding HasUpdate}" Value="True">
+                    <Setter TargetName="UpdateRow" Property="Visibility" Value="Visible" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Updating}" Value="True">
+                    <Setter TargetName="UpdateButton" Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
                 <DataTrigger Binding="{Binding Locked}" Value="True">
                     <Setter TargetName="Toggle" Property="Visibility" Value="Collapsed" />
                     <Setter TargetName="LockChip" Property="Visibility" Value="Visible" />
@@ -307,6 +329,15 @@
                         <TextBlock x:Name="VersionText" FontSize="12.5" Foreground="{StaticResource TextMuted}" Margin="0,3,0,0" />
                     </StackPanel>
                 </StackPanel>
+                <!-- A newer hub in the GitHub releases (found at start; downloads only after the click) -->
+                <Border x:Name="HubUpdateBar" CornerRadius="10" Background="#E6111318" BorderBrush="#40FFC23D" BorderThickness="1"
+                        Padding="12,6" Margin="0,0,36,14" HorizontalAlignment="Right" VerticalAlignment="Bottom" Visibility="Collapsed">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource Icon}" Text="&#xE896;" FontSize="13" Foreground="{StaticResource Accent}" Margin="0,0,10,0" VerticalAlignment="Center" />
+                        <TextBlock x:Name="HubUpdateText" FontSize="12.5" VerticalAlignment="Center" />
+                        <Button x:Name="HubUpdateButton" Style="{StaticResource LinkButton}" Content="{DynamicResource S.Update}" FontSize="12.5" Margin="10,0,0,0" Click="OnUpdateHub" />
+                    </StackPanel>
+                </Border>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,12,12,0">
                     <Button Style="{StaticResource IconButton}" Click="OnMinimize" ToolTip="{DynamicResource S.Minimize}">
                         <TextBlock Style="{StaticResource Icon}" Text="&#xE921;" FontSize="12" />
