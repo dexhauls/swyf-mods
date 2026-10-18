@@ -407,7 +407,7 @@
   </div>
 </section>
 
-<section class="window hubwin" id="knihovna" data-title="Knihovna modů" data-icon="bg-hub|i-grid" data-geo="200,40,680,620" role="dialog" aria-labelledby="h-lib" hidden>
+<section class="window hubwin" id="knihovna" data-title="Knihovna modů" data-icon="bg-hub|i-grid" data-geo="640,40,680,620" role="dialog" aria-labelledby="h-lib" hidden>
   <div class="titlebar"><span class="app sm bg-hub"><svg><use href="#i-grid"/></svg></span><span class="t">Knihovna modů</span><span class="ctrl"><button class="minbtn" aria-label="Minimalizovat"><i class="min"></i></button><button class="maxbtn" aria-label="Maximalizovat"><i class="max"></i></button><button class="x" aria-label="Zavřít"><i class="x"></i></button></span></div>
   <div class="body">
     <h2 id="h-lib" style="font-family:'Segoe UI',system-ui,sans-serif;font-weight:600">Knihovna modů</h2>
@@ -912,8 +912,8 @@
   } else if (phone.matches) {
     open("vitej");
   } else {
-    open("telefon");
     open("vitej");
+    open("knihovna");
   }
   window.addEventListener("resize", function () {
     var a = area();
